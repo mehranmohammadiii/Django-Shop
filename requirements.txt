@@ -1,0 +1,6 @@
+# main modules
+Django==5.2.8
+python-decouple==3.8
+
+# database modules
+psycopg[binary]
