@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'website',
+    'accounts',
 ]
 
 MIDDLEWARE = [
@@ -148,3 +150,16 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD',defualt='')   # 'your_app_password_or_regular_password'
 # DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL ',defualt='')    # 'your_email@example.com' # Default sender for emails
 # SERVER_EMAIL = config('SERVER_EMAIL',defualt='')  # 'your_email@example.com' # Sender for server-generated emails (e.g., error notifications)
+
+AUTH_USER_MODEL = "accounts.User"
+
+# Login settings
+
+# The address of the page where users are redirected after logging in.
+LOGIN_REDIRECT_URL = '/' 
+
+# Login page URL (for @login_required decorator and other cases)
+LOGIN_URL = 'accounts:login'
+
+LOGOUT_REDIRECT_URL = '/'  # Redirect to home page after logout
+

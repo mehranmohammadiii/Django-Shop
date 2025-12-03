@@ -1,0 +1,72 @@
+<!--
+  ================================================================================
+Django message display file using Toastify
+  ================================================================================
+  
+This file is used to display Django messages (success, error, warning, info) 
+using the Toastify library.
+  
+Features:
+    - Automatically display success messages (green)
+    - Automatically display error messages (red)
+    - Automatically display warning messages (orange)
+    - Automatically display information messages (blue)
+    - Right-aligned (suitable for right-aligned text)
+    - Display duration: 4 seconds
+    - Different icons for each type of message
+  
+Usage:
+    - This file is called at the end of the body of the base.html file
+    - In views you can use messages:
+    * messages.success(request, 'success message')
+    * messages.error(request, 'error message')
+    * messages.warning(request, 'warning message')
+    * messages.info(request, 'information message')
+  ================================================================================
+-->
+
+{% if messages %}
+<script>
+  {% for message in messages %}
+    (function() {
+      
+      let messageType = "{{ message.tags }}";
+      let backgroundColor = "#3b82f6"; 
+      let icon = "ℹ️";
+      
+      if (messageType.includes("success")) {
+        backgroundColor = "#10b981";  
+        icon = "✅";
+      } else if (messageType.includes("error")) {
+        backgroundColor = "#ef4444"; 
+        icon = "❌";
+      } else if (messageType.includes("warning")) {
+        backgroundColor = "#f59e0b"; 
+        icon = "⚠️";
+      } else if (messageType.includes("debug")) {
+        backgroundColor = "#8b5cf6"; 
+        icon = "🐛";
+      }
+      
+      
+      Toastify({
+        text: `${icon} {{ message | safe }}`,
+        duration: 4000, 
+        gravity: "top", 
+        position: "right", 
+        backgroundColor: backgroundColor,
+        className: "toastify-message",
+        style: {
+          fontSize: "14px",
+          fontFamily: "Arial, sans-serif",
+          borderRadius: "8px",
+          boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+        },
+        callback: function() {
+         
+        }
+      }).showToast();
+    })();
+  {% endfor %}
+</script>
+{% endif %}
