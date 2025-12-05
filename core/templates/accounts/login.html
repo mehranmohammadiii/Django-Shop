@@ -13,17 +13,16 @@
         <!-- End Heading -->
 
         <!-- Form -->
-        <form action="{% url 'accounts:login' %}" method="post" class="js-validate needs-validation" novalidate>
+        <form action="{% url 'accounts:login' %}" method="post">
           <!-- Form -->
            {% csrf_token %}
           <div class="mb-4">
             <label class="form-label" for="signupSimpleLoginEmail">ایمیل شما</label>
             <input type="email" class="form-control form-control-lg text-center" name="username"
               id="signupSimpleLoginEmail" placeholder="email@site.com" aria-label="email@site.com" required>
-            <span class="invalid-feedback">لطفا یک آدرس ایمیل معتبر وارد کنید.</span>
             {% if form.username.errors %}
-              <div class="invalid-feedback d-block">
-                {% for error in form.username.errors %}{{ error }}{% endfor %}
+              <div class="alert alert-danger mt-2">
+                {% for error in form.username.errors %}{{ error }}<br>{% endfor %}
               </div>
             {% endif %}
           </div>
@@ -36,10 +35,10 @@
 
             </div>
 
-            <div class="input-group input-group-merge" data-hs-validation-validate-class>
+            <div class="input-group input-group-merge">
               <input type="password" class="js-toggle-password form-control form-control-lg text-center" name="password"
-                id="signupSimpleLoginPassword" placeholder="8+ characters required" aria-label="8+ characters required"
-                required minlength="8" data-hs-toggle-password-options='{
+                id="signupSimpleLoginPassword" placeholder="رمز عبور" aria-label="رمز عبور"
+                required data-hs-toggle-password-options='{
                 "target": "#changePassTarget",
                 "defaultClass": "bi-eye-slash",
                 "showClass": "bi-eye",
@@ -52,11 +51,10 @@
 
             <span class="invalid-feedback">لطفا یک گذر واژه معتبر وارد کنید.</span>
             {% if form.password.errors %}
-              <div class="invalid-feedback d-block">
-                {% for error in form.password.errors %}{{ error }}{% endfor %}
+              <div class="alert alert-danger mt-2">
+                {% for error in form.password.errors %}{{ error }}<br>{% endfor %}
               </div>
             {% endif %}
-          </div>
           <!-- End Form -->
 
           <div class="d-grid mb-3">

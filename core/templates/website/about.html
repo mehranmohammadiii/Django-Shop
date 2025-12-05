@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block content %}
+
+    <!-- Gallery -->
+    <div class="container content-space-t-3 content-space-t-lg-5">
+      <div class="w-lg-75 text-center mx-lg-auto">
+        <!-- Heading -->
+        <div class="mb-5 mb-md-10">
+          <h1 class="display-4">درباره ما</h1>
+          <p class="lead">Front یک شرکت وب است که وب سایت می سازد. کسب‌وکارها در هر اندازه‌ای - از استارت‌آپ‌های جدید گرفته تا شرکت‌های عمومی - از موضوع ما برای ایجاد و مدیریت آنلاین کسب‌وکارشان استفاده می‌کنند.</p>
+        </div>
+        <!-- End Heading -->
+      </div>
+
+      <div class="row gx-3">
+        <div class="col mb-3">
+          <div class="bg-img-start" style="background-image: url({% static 'img/480x320/img17.jpg' %}); height: 15rem;"></div>
+        </div>
+        <!-- End Col -->
+
+        <div class="col-3 d-none d-md-block mb-3">
+          <div class="bg-img-start" style="background-image: url({% static 'img/480x320/img6.jpg' %}); height: 15rem;"></div>
+        </div>
+        <!-- End Col -->
+
+        <div class="col mb-3">
+          <div class="bg-img-start" style="background-image: url({% static 'img/480x320/img14.jpg' %}); height: 15rem;"></div>
+        </div>
+        <!-- End Col -->
+
+        <div class="w-100"></div>
+
+        <div class="col mb-3 mb-md-0">
+          <div class="bg-img-start" style="background-image: url({% static 'img/480x320/img25.jpg' %}); height: 15rem;"></div>
+        </div>
+        <!-- End Col -->
+
+        <div class="col-4 d-none d-md-block mb-3 mb-md-0">
+          <div class="bg-img-start" style="background-image: url({% static 'img/480x320/img16.jpg' %}); height: 15rem;"></div>
+        </div>
+        <!-- End Col -->
+
+        <div class="col">
+          <div class="bg-img-start" style="background-image: url({% static 'img/480x320/img12.jpg' %}); height: 15rem;"></div>
+        </div>
+        <!-- End Col -->
+      </div>
+      <!-- End Row -->
+    </div>
+    <!-- End Gallery -->
+
+{% endblock content %}
+

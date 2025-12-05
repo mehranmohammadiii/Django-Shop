@@ -2,6 +2,8 @@ from django.shortcuts import render
 from django.views.generic import TemplateView
 from django.contrib.auth import views
 from django.contrib import messages
+from django.urls import reverse_lazy
+from .forms import AuthenticationForm
 
 class HomePageView(TemplateView):
     template_name = "accounts/home.html"
@@ -18,9 +20,13 @@ class LoginView(views.LoginView):
     """
 
     template_name = "accounts/login.html"
-    form_class = views.AuthenticationForm
+    form_class = AuthenticationForm
     redirect_authenticated_user = True
-    # messages.success(request, 'کاربر با موفقیت ایجاد شد!')
+    # success_url = reverse_lazy('accounts:account')
+    
+    def form_valid(self, form):
+        messages.success(self.request, 'خوش‌آمدید! با موفقیت وارد شدید.')
+        return super().form_valid(form)
 # -----------------------------------------------------------------------------------------------------
 class LogoutView(views.LogoutView):
     """
@@ -29,5 +35,8 @@ class LogoutView(views.LogoutView):
     This view inherits from the Django LogoutView class and has the following settings:
     - next_page: The URL to redirect to after logout
     """
-
-    # next_page = '/'  # Redirect to home page after logout
+    # next_page = reverse_lazy('accounts:account')  
+    next_page = '/'  # Redirect to home page after logout
+    def dispatch(self, request, *args, **kwargs):
+        messages.success(request, 'با موفقیت از سیستم خارج شدید.')
+        return super().dispatch(request, *args, **kwargs)

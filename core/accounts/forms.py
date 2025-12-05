@@ -1,6 +1,6 @@
-from django.contrib.auth import forms
-
-class AuthenticationForm(forms.AuthenticationForm):
+from django.contrib.auth import forms as auth_forms
+from django import forms
+class AuthenticationForm(auth_forms.AuthenticationForm):
     username = forms.EmailField(
         widget=forms.EmailInput(attrs={'autofocus': True, 'class': 'form-control'})
     )
@@ -11,9 +11,5 @@ class AuthenticationForm(forms.AuthenticationForm):
     )
 
     def confirm_login_allowed(self, user):
-        if not user.is_verified:
-            raise forms.ValidationError(
-                ("This account is not verified."),
-                code='unverified',
-            )
+        # حالا بدون تایید هم کار می‌کنه
         return super().confirm_login_allowed(user)

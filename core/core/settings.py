@@ -37,8 +37,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_render_partial',
+    'django.contrib.humanize',
     'website',
     'accounts',
+    'shop',
 ]
 
 MIDDLEWARE = [
@@ -161,5 +164,5 @@ LOGIN_REDIRECT_URL = '/'
 # Login page URL (for @login_required decorator and other cases)
 LOGIN_URL = 'accounts:login'
 
-LOGOUT_REDIRECT_URL = '/'  # Redirect to home page after logout
+LOGOUT_REDIRECT_URL = 'accounts:login'  # Redirect to home page after logout
 

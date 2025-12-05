@@ -1,0 +1,76 @@
+{% load render_partial %}
+{% load humanize %}
+
+{% load static %}
+            {%for product in similar_products %}
+            <div class="col mb-4">
+              <!-- Card -->
+              <div class="card card-bordered shadow-none text-center h-100">
+                <div class="card-pinned">
+                  {% if product.images.all %}
+                    <img class="card-img-top" src="/media/{{ product.images.first.image }}" alt="{{ product.images.first.alt_text }}" style="height: 250px; object-fit: cover;">
+                  {% elif product.image %}
+                    <img class="card-img-top" src="/media/{{ product.image }}" alt="{{ product.name }}" style="height: 250px; object-fit: cover;">
+                  {% else %}
+                    <img class="card-img-top" src="{% static 'img/300x180/img1.jpg' %}" alt="Image Description" style="height: 250px; object-fit: cover;">
+                  {% endif %}
+
+                  <div class="card-pinned-top-end">
+                    <button type="button" class="btn btn-outline-secondary btn-xs btn-icon rounded-circle" data-bs-toggle="tooltip" data-bs-placement="top" title="افزودن به علایق">
+                      <i class="bi-heart"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="card-body">
+                  <div class="mb-2">
+                    {% for category in product.category.all %}
+                      <a class="link-sm link-secondary" href="#">{{ category.name }}</a>{% if not forloop.last %}<span>, </span>{% endif %}
+                    {% endfor %}
+                  </div>
+
+                  <h4 class="card-title">
+                    <a class="text-dark" href="{% url 'shop:product_detail' slug=product.slug %}">{{ product.name }}</a>
+                  </h4>
+                  
+                  <div class="mb-2">
+                    {% if product.discount_price and product.discount_price < product.price %}
+                      <span class="text-danger text-decoration-line-through me-2">{{ product.price|intcomma }}</span>
+                      <span class="text-dark fw-bold">:,{{ product.discount_price|intcomma }}</span>
+                    {% else %}
+                      <p class="card-text text-dark">:,{{ product.price|intcomma }}</p>
+                    {% endif %}
+                  </div>
+
+                  <div class="mb-2">
+                    {% if product.stock > 0 %}
+                      <span class="badge bg-success">موجود ({{ product.stock }})</span>
+                    {% else %}
+                      <span class="badge bg-danger">ناموجود</span>
+                    {% endif %}
+                  </div>
+                </div>
+
+                <div class="card-footer pt-0">
+                  <!-- Rating -->
+                  <a class="d-inline-flex align-items-center mb-3" href="#">
+                    <div class="d-flex gap-1 ms-2">
+                      <img src="{% static 'svg/illustrations/star.svg' %}" alt="Review rating" width="16">
+                      <img src="{% static 'svg/illustrations/star.svg' %}" alt="Review rating" width="16">
+                      <img src="{% static 'svg/illustrations/star.svg' %}" alt="Review rating" width="16">
+                      <img src="{% static 'svg/illustrations/star.svg' %}" alt="Review rating" width="16">
+                      <img src="{% static 'svg/illustrations/star-muted.svg' %}" alt="Review rating" width="16">
+                    </div>
+                    <span class="small">40</span>
+                  </a>
+                  <!-- End Rating -->
+
+                  <button type="button" class="btn btn-outline-primary btn-sm btn-transition rounded-pill">افزودن به سبد خرید</button>
+                </div>
+              </div>
+              <!-- End Card -->
+            </div>
+            <!-- End Col -->
+             {% endfor %}
+
+{% load static %}
