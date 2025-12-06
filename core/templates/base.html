@@ -105,7 +105,8 @@
                   </ul>
                 </div>
               {% else %}
-                <a class="btn btn-primary btn-transition" href="{% url 'accounts:login' %}">ورود</a>
+                <a class="btn btn-primary btn-transition" id='cart-count' href="{% url 'accounts:login' %}">ورود</a>
+                
               {% endif %}
             </li>
           </ul>
@@ -432,6 +433,8 @@
   <!-- JS Toastify -->
   <script src="{% static 'vendor/toastify/toastify.js'%}"></script>
 
+  <!-- ajax cart add product -->
+  <script src="{% static 'js/cart.js' %}"></script>
 
 
   <!-- JS Plugins Init. -->
