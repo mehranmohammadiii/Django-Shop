@@ -32,16 +32,19 @@ function add_cart_item(productId, quantity = 1) {
             console.log('Cart Items:', data.cart_items);
             console.log('Total Items:', data.total_items);
             
+            // Show success notification
+            showSuccessNotification('✅ محصول به سبد خرید اضافه شد');
+            
             // Update UI if needed
             updateCartUI(data);
         } else {
             console.error('Error:', data.message);
-            alert('Error: ' + data.message);
+            showErrorNotification('❌ خطا: ' + data.message);
         }
     })
     .catch(error => {
         console.error('Fetch Error:', error);
-        alert('Failed to add product to cart');
+        showErrorNotification('❌ خطا در افزودن محصول به سبد خرید');
     });
 }
 
@@ -78,6 +81,38 @@ function updateCartUI(data) {
     
     // Trigger custom event for other components to listen
     document.dispatchEvent(new CustomEvent('cartUpdated', { detail: data }));
+}
+
+/**
+ * Show success notification
+ * @param {string} message - Success message
+ */
+function showSuccessNotification(message) {
+    Toastify({
+        text: message,
+        duration: 3000,
+        gravity: "top",
+        position: "right",
+        backgroundColor: "#28a745",
+        stopOnFocus: true,
+        className: "info"
+    }).showToast();
+}
+
+/**
+ * Show error notification
+ * @param {string} message - Error message
+ */
+function showErrorNotification(message) {
+    Toastify({
+        text: message,
+        duration: 3000,
+        gravity: "top",
+        position: "right",
+        backgroundColor: "#dc3545",
+        stopOnFocus: true,
+        className: "error"
+    }).showToast();
 }
 
 // Example usage:

@@ -81,10 +81,15 @@
               <!-- End Search -->
 
               <!-- Shopping Cart -->
-              <button type="button" class="btn btn-ghost-secondary btn-icon" type="button" data-bs-toggle="offcanvas"
+              {% comment %} <button type="button" class="btn btn-ghost-secondary btn-icon" type="button" data-bs-toggle="offcanvas"
                 data-bs-target="#offcanvasNavbarShoppingCart" aria-controls="offcanvasNavbarShoppingCart">
                 <i class="bi-basket"></i>
-                <span class="cart-item-count ">3</span>
+                <span class="cart-item-count "></span>
+              </button> {% endcomment %}
+                <a href="{% url "cart:view-cart" %}"class="btn btn-ghost-secondary btn-icon"</a>
+                
+                <i class="bi-basket"></i>
+                <span class="cart-item-count "></span>
               </button>
               <!-- End Shopping Cart -->
 
