@@ -3,8 +3,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from accounts.models import UserType
-
-class CustomerDashboardHomeView(LoginRequiredMixin, TemplateView):
+from ..permissions import HasCustomerAccesPermission
+class CustomerDashboardHomeView(LoginRequiredMixin,HasCustomerAccesPermission, TemplateView):
     template_name = 'dashboard/customer/home.html'
     
     # def dispatch(self, request, *args, **kwargs):

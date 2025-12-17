@@ -5,7 +5,7 @@ from django.urls import reverse_lazy
 from accounts.models import UserType
 
 class DashboardHomeView(LoginRequiredMixin, View):
-    
+
     # template_name = 'dashboard/home.html'
     
     # def get_context_data(self, **kwargs):
