@@ -99,7 +99,7 @@
                     {{ user.email }}
                   </a>
                   <ul class="dropdown-menu dropdown-menu-end">
-                    <li><a class="dropdown-item" href="{% url 'accounts:account' %}">حساب من</a></li>
+                    <li><a class="dropdown-item" href="{% url 'dashboard:home' %}">حساب من</a></li>
                     <li><hr class="dropdown-divider"></li>
                     <li>
                       <form method="post" action="{% url 'accounts:logout' %}" style="display: inline;">

@@ -1,0 +1,25 @@
+{% comment %} {% extends "base.html" %}
+
+{% block title %}داشبورد{% endblock title %}
+
+{% block content %}
+
+<div class="container content-space-1">
+    
+    {% if user_type == 2 %}
+        <!-- ادمین -->
+        {% include "dashboard/admin/home.html" %}
+    
+    {% elif user_type == 1 %}
+        <!-- کاستومر -->
+        {% include "dashboard/customer/home.html" %}
+    
+    {% else %}
+        <div class="alert alert-danger">
+            <p>نوع کاربری شناخته نشد!</p>
+        </div>
+    {% endif %}
+
+</div>
+
+{% endblock content %} {% endcomment %}
