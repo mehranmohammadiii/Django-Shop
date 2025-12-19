@@ -62,11 +62,11 @@ class User(AbstractBaseUser, PermissionsMixin) :
         return self.email
 # --------------------------------------------------------------------------------------------
 class Profile(models.Model) :
-    user = models.OneToOneField(User,on_delete=models.CASCADE)
+    user = models.OneToOneField(User,on_delete=models.CASCADE,related_name='user_profile')
     first_name = models.CharField(max_length=250)
     last_name = models.CharField(max_length=250)
     phone_number = models.CharField(max_length=20, validators=[validate_phone_number], blank=True, null=True)
-    image = models.ImageField(null=True,blank=True)
+    image = models.ImageField(upload_to='profiles/',default='profiles/default.jpg', blank=True, null=True)
     created_date = models.DateTimeField(auto_now_add=True) 
     updated_date = models.DateTimeField(auto_now=True)
     descriptions = models.TextField()
@@ -79,6 +79,8 @@ def create_profile(sender, instance, created, **kwargs):
     '''
     Signal creation: When creating a user, a profile is automatically created.
     '''
-    if created and instance.type == UserType.CUSTOMER.value:
+    # if created and instance.type == UserType.CUSTOMER.value:
+    #     Profile.objects.create(user=instance)
+    if created:
         Profile.objects.create(user=instance)
 # --------------------------------------------------------------------------------------------

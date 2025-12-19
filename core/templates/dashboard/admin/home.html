@@ -1,11 +1,10 @@
+
 {% extends "dashboard/admin/base.html" %}
-
 {% load static %}
-{% load humanize %}
 
-{% block content %}
+{% block content2 %}
 
-    <!-- Breadcrumb -->
+    {% comment %} <!-- Breadcrumb -->
     <div class="navbar-dark bg-dark" style="
           background-image: url({% static 'svg/components/wave-pattern-light.svg' %});
         ">
@@ -78,18 +77,18 @@
                   <!-- List -->
                   <ul class="nav nav-sm nav-tabs nav-vertical mb-4">
                     <li class="nav-item">
-                      <a class="nav-link" href="./account-home.html">
-                        <i class="bi-person-badge nav-icon"></i>داشبورد
+                      <a class="nav-link" href="{% url 'dashboard:admin:home' %}">
+                        <i class="bi-person-badge nav-icon"></i> داشبورد
                       </a>
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link" href="./account-security.html">
+                      <a class="nav-link" href="{% url 'dashboard:admin:security-edit' %}">
                         <i class="bi-shield-shaded nav-icon"></i> امنیت
                       </a>
                     </li>
 
                     <li class="nav-item">
-                      <a class="nav-link" href="./account-overview.html">
+                      <a class="nav-link" href="javascript:void(0);">
                         <i class="bi-sliders nav-icon"></i> تنظیمات پروفایل
                       </a>
                     </li>
@@ -101,17 +100,17 @@
                   <!-- List -->
                   <ul class="nav nav-sm nav-tabs nav-vertical mb-4">
                     <li class="nav-item">
-                      <a class="nav-link " href="./admin-account-products.html">
+                      <a class="nav-link " href="javascript:void(0);">
                         <i class="bi-shop-window nav-icon"></i> محصولات
                       </a>
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link " href="./admin-account-order.html">
+                      <a class="nav-link " href="javascript:void(0);">
                         <i class="bi-receipt-cutoff nav-icon"></i> سفارشات
                       </a>
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link " href="./admin-account-support.html">
+                      <a class="nav-link " href="javascript:void(0);">
                         <i class="bi-envelope nav-icon"></i> تیکت ها
                       </a>
                     </li>
@@ -124,12 +123,12 @@
                    <!-- List -->
                    <ul class="nav nav-sm nav-tabs nav-vertical mb-4">
                     <li class="nav-item">
-                      <a class="nav-link " href="./admin-account-users.html">
+                      <a class="nav-link " href="javascript:void(0);">
                         <i class="bi-person nav-icon"></i> لیست کاربران
                       </a>
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link " href="./admin-account-newsletter.html">
+                      <a class="nav-link " href="javascript:void(0);">
                         <i class="bi-newspaper nav-icon"></i> خبرنامه
                       </a>
                     </li>
@@ -186,6 +185,26 @@
       </div>
       <!-- End Row -->
     </div>
-    <!-- End Content Section -->
+    <!-- End Content Section --> {% endcomment %}
+        <div class="col-lg-9">
+          <!-- Card -->
+          <div class="card">
+            <!-- Header -->
+            <div class="card-header border-bottom">
+              <h5 class="card-header-title">خلاصه داشبورد</h5>
+            </div>
+            <!-- End Header -->
 
-{% endblock content%}
+            <!-- Body -->
+            <div class="card-body">
+              <div class="row">
+
+              </div>
+              <!-- End Row -->
+
+            </div>
+            <!-- End Body -->
+          </div>
+          <!-- End Card -->
+        </div>
+{% endblock content2 %}
