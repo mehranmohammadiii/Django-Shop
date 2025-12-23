@@ -2,6 +2,7 @@ from django.contrib.auth import forms as auth_forms
 from django.core.exceptions import ValidationError
 from django import forms
 from accounts.models import Profile
+from shop.models import Product, Category
 
 
 class AdminPasswordChangeForm(auth_forms.PasswordChangeForm):
@@ -75,4 +76,57 @@ class AdminProfileEditForm(forms.ModelForm):
             'phone_number': forms.TextInput(attrs={'class': 'form-control'}),
             'image': forms.ClearableFileInput(attrs={'class': 'form-control-file'}),
             'descriptions': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
+        }
+
+# -------------------------------------------------------------------------------------------------------------------
+
+class AdminProductEditForm(forms.ModelForm):
+    """
+    فرم ویرایش محصولات برای مدیران
+    """
+    class Meta:
+        model = Product
+        fields = ['name', 'description', 'price', 'discount_price', 'stock', 'category', 'status', 'image']
+        widgets = {
+            'name': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'نام محصول را وارد کنید'
+            }),
+            'description': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 4,
+                'placeholder': 'توضیحات محصول را وارد کنید'
+            }),
+            'price': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'قیمت بر حسب تومان',
+                'step': '0.01'
+            }),
+            'discount_price': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'قیمت با تخفیف (اختیاری)',
+                'step': '0.01'
+            }),
+            'stock': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'تعداد موجودی',
+                'min': '0'
+            }),
+            'category': forms.CheckboxSelectMultiple(),
+            'status': forms.Select(attrs={
+                'class': 'form-select'
+            }),
+            'image': forms.ClearableFileInput(attrs={
+                'class': 'form-control'
+            }),
+        }
+        labels = {
+            'name': 'نام محصول',
+            'description': 'توضیحات',
+            'price': 'قیمت',
+            'discount_price': 'قیمت تخفیف شده',
+            'stock': 'تعداد موجودی',
+            'category': 'دسته‌بندی',
+            'status': 'وضعیت',
+            'image': 'تصویر محصول',
         }

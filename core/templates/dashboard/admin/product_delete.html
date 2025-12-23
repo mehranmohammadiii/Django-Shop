@@ -1,0 +1,37 @@
+{% extends "dashboard/admin/base.html" %}
+{% load static %}
+
+{% block content2 %}
+
+        <div class="col-lg-9">
+
+          <!-- Card -->
+          <div class="card">
+            <!-- Header -->
+            <div class="card-header border-bottom">
+              <h5 class="card-header-title">حذف محصول</h5>
+            </div>
+            <!-- End Header -->
+
+            <!-- Body -->
+            <div class="card-body">
+              <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="row d-flex ">
+                  
+                <p>آیا از حذف محصول "{{ object.name }}" مطمئن هستید؟</p>
+
+                  <!-- دکمه‌های اقدام -->
+                  <div class="col-md-12 mb-3 pt-3">
+                    <div class="d-flex justify-content-end gap-2">
+                      <a class="btn btn-secondary" href="{% url 'dashboard:admin:product-update' object.pk %}">بازگشت</a>
+                      <button type="submit" class="btn btn-danger">تایید حذف </button>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+{% endblock content2 %}

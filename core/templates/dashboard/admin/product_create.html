@@ -1,0 +1,130 @@
+{% extends "dashboard/admin/base.html" %}
+{% load static %}
+
+{% block content2 %}
+
+        <div class="col-lg-9">
+
+          <!-- Card -->
+          <div class="card">
+            <!-- Header -->
+            <div class="card-header border-bottom">
+              <h5 class="card-header-title">ایجاد محصول</h5>
+            </div>
+            <!-- End Header -->
+
+            <!-- Body -->
+            <div class="card-body">
+              <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="row d-flex ">
+                  
+                  <!-- نام محصول -->
+                  <div class="col-md-6 mb-3">
+                    <label for="{{ form.name.id_for_label }}">نام محصول</label>
+                    {{ form.name }}
+                    {% if form.name.errors %}
+                      <div class="invalid-feedback d-block">
+                        {{ form.name.errors.0 }}
+                      </div>
+                    {% endif %}
+                  </div>
+
+                  </div>
+
+                  <!-- تعداد موجودی -->
+                  <div class="col-md-6 mb-3">
+                    <label for="{{ form.stock.id_for_label }}">تعداد موجودی</label>
+                    {{ form.stock }}
+                    {% if form.stock.errors %}
+                      <div class="invalid-feedback d-block">
+                        {{ form.stock.errors.0 }}
+                      </div>
+                    {% endif %}
+                  </div>
+
+                  <!-- وضعیت -->
+                  <div class="col-md-6 mb-3">
+                    <label for="{{ form.status.id_for_label }}">وضعیت</label>
+                    {{ form.status }}
+                    {% if form.status.errors %}
+                      <div class="invalid-feedback d-block">
+                        {{ form.status.errors.0 }}
+                      </div>
+                    {% endif %}
+                  </div>
+
+                  <!-- دسته بندی -->
+                  <div class="col-md-6 mb-3">
+                    <label for="{{ form.category.id_for_label }}">دسته بندی</label>
+                    {{ form.category }}
+                    {% if form.category.errors %}
+                      <div class="invalid-feedback d-block">
+                        {{ form.category.errors.0 }}
+                      </div>
+                    {% endif %}
+                  </div>
+
+                  <!-- قیمت -->
+                  <div class="col-md-3 mb-3">
+                    <label for="{{ form.price.id_for_label }}">قیمت</label>
+                    {{ form.price }}
+                    {% if form.price.errors %}
+                      <div class="invalid-feedback d-block">
+                        {{ form.price.errors.0 }}
+                      </div>
+                    {% endif %}
+                  </div>
+
+                  <!-- درصد تخفیف -->
+                  <div class="col-md-3 mb-3">
+                    <label for="{{ form.discount_price.id_for_label }}">قیمت تخفیف شده</label>
+                    {{ form.discount_price }}
+                    {% if form.discount_price.errors %}
+                      <div class="invalid-feedback d-block">
+                        {{ form.discount_price.errors.0 }}
+                      </div>
+                    {% endif %}
+                  </div>
+
+                  <!-- توضیحات -->
+                  <div class="col-md-12 mb-3">
+                    <label for="{{ form.description.id_for_label }}">توضیحات</label>
+                    {{ form.description }}
+                    {% if form.description.errors %}
+                      <div class="invalid-feedback d-block">
+                        {{ form.description.errors.0 }}
+                      </div>
+                    {% endif %}
+                  </div>
+
+                  <!-- تصویر محصول -->
+                  <div class="col-md-12 mb-3">
+                    <label for="{{ form.image.id_for_label }}">تصویر محصول</label>
+                    {% if object.image %}
+                      <div class="mb-2">
+                        <img src="{{ object.image.url }}" alt="{{ object.name }}" class="img-thumbnail" style="max-width: 200px;">
+                      </div>
+                    {% endif %}
+                    {{ form.image }}
+                    {% if form.image.errors %}
+                      <div class="invalid-feedback d-block">
+                        {{ form.image.errors.0 }}
+                      </div>
+                    {% endif %}
+                  </div>
+
+                  <!-- دکمه‌های اقدام -->
+                  <div class="col-md-12 mb-3 pt-3">
+                    <div class="d-flex justify-content-end gap-2">
+                      <a class="btn btn-secondary" href="{% url 'dashboard:admin:product-list' %}">بازگشت</a>
+                      <button type="submit" class="btn btn-primary">ثبت محصول</button>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+{% endblock content2 %}
