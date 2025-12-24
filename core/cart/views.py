@@ -23,6 +23,9 @@ class SessionCartAddProduct(View):
         cart = CartSession(request.session)
         cart.add_product(product_id, quantity)
         
+        if request.user.is_authenticated:
+            cart.merge_cart_items_to_db(request.user)
+
         return JsonResponse({
             'status': 'success',
             'message': 'Product added to cart',
@@ -48,7 +51,9 @@ class SessionCartRemoveProduct(View):
         
         cart = CartSession(request.session)
         cart.remove(product_id)
-        
+
+        if request.user.is_authenticated:
+            cart.merge_cart_items_to_db(request.user)
         return JsonResponse({
             'status': 'success',
             'message': 'Product removed from cart',
@@ -75,7 +80,10 @@ class SessionCartUpdateProduct(View):
         
         cart = CartSession(request.session)
         cart.update_product(product_id, quantity)
-        
+
+        if request.user.is_authenticated:
+            cart.merge_cart_items_to_db(request.user) 
+                  
         return JsonResponse({
             'status': 'success',
             'message': 'Product quantity updated',
