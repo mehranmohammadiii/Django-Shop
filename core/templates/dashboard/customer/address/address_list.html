@@ -1,0 +1,70 @@
+{% extends "dashboard/customer/base.html" %}
+{% load static %}
+
+{% block content2 %}
+
+        <div class="col-lg-9">
+          <!-- Card -->
+          <div class="card">
+            <!-- Header -->
+            <div class="card-header border-bottom">
+              <h5 class="card-header-title">آدرس های من</h5>
+            </div>
+            <!-- End Header -->
+
+            <!-- Body -->
+            <div class="card-body">
+              <div class="row">
+                {% for address in addresses %}
+                <div class="col-sm-12 mb-5 mb-sm-7">
+                  <!-- Radio Check -->
+                  <div class="w-100 h-100">
+                    <label class="">
+                      <span class="h5 d-block">{{ address.address_line1 }}</span>
+
+                      <span class="d-block mb-2">
+                        {{ address.city }}<br>
+                        {{ address.state }} - {{ address.postal_code }}
+                      </span>
+                      <div class="mt-2">
+                        <a class="btn btn-white btn-xs" href="{% url 'dashboard:customer:address-edit' address.id %}">
+                          <i class="bi-pencil-fill me-1"></i> ویرایش
+                        </a>
+                        <a class="btn btn-white btn-xs" href="{% url 'dashboard:customer:address-delete' address.id %}">
+                          <i class="bi-trash me-1"></i> حذف
+                        </a>
+                      </div>
+                    </label>
+                  </div>
+                  <!-- End Radio Check -->
+                </div>
+                <!-- End Col -->
+                {% empty %}
+                <div class="col-sm-12 mb-5 mb-sm-7">
+                  <p class="text-center text-muted py-4">هیچ آدرسی ثبت نشده است.</p>
+                </div>
+                {% endfor %}
+
+                <div class="col-sm-12 mb-5 mb-sm-7">
+                  <!-- Card -->
+                  <a class="card card-dashed card-centered" href="{% url 'dashboard:customer:address-create' %}">
+                    <div class="card-body card-dashed-body py-8">
+                      <img class="avatar avatar-lg avatar-4x3 mb-2" src="{% static 'svg/illustrations/oc-address.svg' %}"
+                        alt="آدرس جدید" />
+                      <span class="d-block"><i class="bi-plus"></i> یک آدرس جدید اضافه کنید</span>
+                    </div>
+                  </a>
+                  <!-- End Card -->
+                </div>
+                <!-- End Col -->
+              </div>
+              <!-- End Row -->
+
+
+            </div>
+            <!-- End Body -->
+          </div>
+          <!-- End Card -->
+        </div>
+
+{% endblock content2 %}

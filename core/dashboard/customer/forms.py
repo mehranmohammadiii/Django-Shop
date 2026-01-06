@@ -2,7 +2,7 @@ from django.contrib.auth import forms as auth_forms
 from django.core.exceptions import ValidationError
 from django import forms
 from accounts.models import Profile
-
+from order.models import UserAddress
 
 class CustomerPasswordChangeForm(auth_forms.PasswordChangeForm):
     """
@@ -76,3 +76,14 @@ class CustomerProfileEditForm(forms.ModelForm):
             'descriptions': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
         }
 # -------------------------------------------------------------------------------------------------------------------
+class CustomerAddressForm(forms.ModelForm):
+    class Meta:
+        model = UserAddress
+        fields = ['address_line1', 'postal_code', 'state', 'city']
+        widgets = {
+            'address_line1': forms.TextInput(attrs={'class': 'form-control'}),
+            'postal_code': forms.TextInput(attrs={'class': 'form-control'}),
+            'state': forms.TextInput(attrs={'class': 'form-control'}),
+            'city': forms.TextInput(attrs={'class': 'form-control'}),
+
+        }
