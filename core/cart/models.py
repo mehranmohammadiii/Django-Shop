@@ -5,6 +5,10 @@ class Cart(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def calculate_total_price(self):
+        total = sum(item.product.price * item.quantity for item in self.items.all())
+        return total
+
     def __str__(self):
         return f"Cart {self.user}"
 
