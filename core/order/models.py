@@ -44,6 +44,7 @@ class Order(models.Model):
     coupon = models.ForeignKey(Coupon, null=True, blank=True, on_delete=models.PROTECT)
     status = models.IntegerField(choices=OrderStatusTypes.choices, default=OrderStatusTypes.PENDING.value)
     address = models.ForeignKey(UserAddress, on_delete=models.CASCADE)
+    peyment = models.ForeignKey('payment.Payment',on_delete=models.SET_NULL,null=True,blank=True)
 
     def calculate_total_price(self):
         total = sum(item.price * item.quantity for item in self.items.all())

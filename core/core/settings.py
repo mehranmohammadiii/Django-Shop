@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'cart',
     'dashboard',
     'order',
+    'payment',
 ]
 
 MIDDLEWARE = [
@@ -170,3 +171,5 @@ LOGIN_URL = 'accounts:login'
 
 LOGOUT_REDIRECT_URL = 'accounts:login'  # Redirect to home page after logout
 
+MERCHANT_ID = config('MERCHANT_ID',default='e5f9e6b2-a005-4d8e-851c-63e026ec3421')
+SANDBOX_MODE = config('SANDBOX_MODE', cast = bool,default=True)
