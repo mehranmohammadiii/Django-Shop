@@ -17,17 +17,19 @@ import json
 from django.views import View
 from django.http import JsonResponse
 from django.utils import timezone
-
+from payment.zarinpal_client import ZarinPalSandbox
+from payment.models import Payment
+# -----------------------------------------------------------------------------------------------------------------------
 class CheckoutView(LoginRequiredMixin, HasCustomerAccesPermission, FormView):
     template_name = 'order/checkout.html'
     form_class = CheckOutForm
     success_url = reverse_lazy('order:checkout-complete')
-
+    # -------------------------------------
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['request'] = self.request
         return kwargs
-
+    # -------------------------------------
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
@@ -61,7 +63,7 @@ class CheckoutView(LoginRequiredMixin, HasCustomerAccesPermission, FormView):
         context['final_total'] = final_total
 
         return context
-        
+    # -------------------------------------       
     def form_valid(self, form):
         # دریافت coupon اگر موجود باشد
         coupon = getattr(form, 'coupon', None)
@@ -98,13 +100,45 @@ class CheckoutView(LoginRequiredMixin, HasCustomerAccesPermission, FormView):
         order.total_price = total_price + shipping_cost + tax
         order.save()
 
+        payment_response = self.create_payment(order)
+        if payment_response:
+            return payment_response
+        
         messages.success(self.request, "سفارش شما با موفقیت ثبت شد.")
         return super().form_valid(form)
-# ------------------------------------------------------------------------------------------------------
+    # -------------------------------------
+    def create_payment(self,order):
+
+        zarin_pal_sandbox = ZarinPalSandbox() 
+        response = zarin_pal_sandbox.payment_request(amount=int(order.total_price), description=f"پرداخت سفارش #{order.id}")
+        
+        # بررسی خطا
+        if response.get('errors'):
+            messages.error(self.request, f"خطا در درخواست پرداخت: {response['errors']}")
+            return redirect('order:checkout')
+        
+        if response.get('data') and response['data'].get('authority'):
+            authority_code = response['data'].get('authority')
+            payment_page_url = zarin_pal_sandbox.get_payment_page_url(authority_code)
+            print('   authority_code   ')
+            print(authority_code)
+            payment_obj= Payment.objects.create(
+                authority_code=authority_code,
+                amount=order.total_price,
+            )   
+            order.peyment = payment_obj
+            order.save()
+            return redirect(payment_page_url)
+        else:
+            messages.error(self.request, "خطا در درخواست پرداخت. لطفاً دوباره تلاش کنید.")
+            return redirect('order:checkout')
+# ------------------------------------------------------------------------------------------------------------------------------------
 class CompletedView(LoginRequiredMixin, HasCustomerAccesPermission, TemplateView):
     template_name = 'order/checkout_complete.html'
-# ------------------------------------------------------------------------------------------------------
-
+# ----------------------------------------------------------------------------------------------------------------------------------
+class FailedView(LoginRequiredMixin, HasCustomerAccesPermission, TemplateView):
+    template_name = 'order/checkout_failed.html'
+# ----------------------------------------------------------------------------------------------------------------------------------
 class validate_coupon(LoginRequiredMixin, HasCustomerAccesPermission, View):
 
     def post(self, request, *args, **kwargs):
@@ -155,3 +189,4 @@ class validate_coupon(LoginRequiredMixin, HasCustomerAccesPermission, View):
             final_total = total_price + shipping_cost + tax
 
         return JsonResponse({'valid': True, 'tax' : tax,'final_total': final_total, 'message': 'کد تخفیف معتبر است!', 'discount': coupon_obj.discount_percentage})
+# -----------------------------------------------------------------------------------------------------------------------------------
