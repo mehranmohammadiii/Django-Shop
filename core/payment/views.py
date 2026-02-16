@@ -6,7 +6,7 @@ from .zarinpal_client import ZarinPalSandbox
 from order.models import Order, OrderStatusTypes
 # --------------------------------------------------------------------------------------------------------
 class PaymentVerifyView(View):
-    
+
     def get(self, request):
 
         authority_code = request.GET.get('Authority')
@@ -14,7 +14,7 @@ class PaymentVerifyView(View):
         payment_obj = get_object_or_404(Payment, authority_code=authority_code)
         zarinpal = ZarinPalSandbox()
         verification_response = zarinpal.payment_verify(authority_code, int(payment_obj.amount))
-        order = get_object_or_404(Order, payment=payment_obj)
+        order = get_object_or_404(Order, peyment=payment_obj)
 
         if status == 'OK':
             if verification_response['data'].get('code') in [100, 101] :
