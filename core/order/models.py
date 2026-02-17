@@ -59,6 +59,9 @@ class OrderItem(models.Model):
     quantity = models.PositiveIntegerField(default=1)
     price = models.DecimalField(max_digits=10, decimal_places=0)
 
+    def get_cost(self):
+        return self.price * self.quantity
+
     def __str__(self):
         return f"{self.quantity} x {self.product.name} in Order #{self.order.id}"
 # ---------------------------------------------------------------------------------------------------------
