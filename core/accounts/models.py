@@ -71,6 +71,9 @@ class Profile(models.Model) :
     updated_date = models.DateTimeField(auto_now=True)
     descriptions = models.TextField()
 
+    def full_name(self):
+        return f"{self.first_name} {self.last_name}"
+
     def __str__(self):
         return self.user.email
 # --------------------------------------------------------------------------------------------

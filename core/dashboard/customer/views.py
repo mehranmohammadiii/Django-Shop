@@ -1,15 +1,17 @@
-from django.views.generic import TemplateView, UpdateView, CreateView, DeleteView
+from django.views.generic import TemplateView, UpdateView, CreateView, DeleteView, ListView, DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.contrib import messages
+from django.core.paginator import Paginator
+from django.db.models import Q
 from accounts.models import UserType
 from ..permissions import HasCustomerAccesPermission
 from django.contrib.auth import views as auth_view
 from .forms import CustomerPasswordChangeForm,CustomerProfileEditForm,CustomerAddressForm
 from accounts.models import Profile
-from order.models import UserAddress
-
+from order.models import UserAddress, Order
+# -----------------------------------------------------------------------------------------
 class CustomerDashboardHomeView(LoginRequiredMixin,HasCustomerAccesPermission, TemplateView):
     template_name = 'dashboard/customer/home.html'
     
@@ -20,7 +22,6 @@ class CustomerDashboardHomeView(LoginRequiredMixin,HasCustomerAccesPermission, T
     #     return super().dispatch(request, *args, **kwargs)
 
 # -----------------------------------------------------------------------------------------
-
 class CustomerSecurityEditView(LoginRequiredMixin, HasCustomerAccesPermission, auth_view.PasswordChangeView):   
     template_name = 'dashboard/customer/security_edit.html'
     success_url = reverse_lazy('dashboard:customer:security-edit')
@@ -131,5 +132,67 @@ class CustomerAddressDeleteView(LoginRequiredMixin, HasCustomerAccesPermission, 
         messages.success(request, f'آدرس "{object_name}" با موفقیت حذف شد.')
         
         return response
-    
 # -------------------------------------------------------------------------------------------  
+class CustomerOrderListView(LoginRequiredMixin, HasCustomerAccesPermission, TemplateView):
+
+    template_name = 'dashboard/customer/orders/order_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        # Get search query
+        search_query = self.request.GET.get('q', '').strip()
+        context['search_query'] = search_query
+
+        all_orders = Order.objects.filter(user=self.request.user).prefetch_related('items__product')
+        
+        if search_query:
+            all_orders = all_orders.filter(
+                Q(id__icontains=search_query) |
+                Q(items__product__name__icontains=search_query) |
+                Q(items__product__category__name__icontains=search_query)
+            ).distinct()
+        
+        # فیلتر کردن سفارشات بر اساس وضعیت
+        pending = all_orders.filter(status=1)
+        processing_shipped = all_orders.filter(status__in=[2, 3])
+        delivered = all_orders.filter(status=4)
+        canceled = all_orders.filter(status=5)
+        
+        # صفحه بندی
+        paginator1 = Paginator(pending, 2)
+        page1 = self.request.GET.get('page1', 1)
+        context['pending_orders'] = paginator1.get_page(page1)
+        context['paginator1'] = paginator1
+        
+        paginator2 = Paginator(processing_shipped, 2)
+        page2 = self.request.GET.get('page2', 1)
+        context['processing_shipped_orders'] = paginator2.get_page(page2)
+        context['paginator2'] = paginator2
+        
+        paginator3 = Paginator(delivered, 2)
+        page3 = self.request.GET.get('page3', 1)
+        context['delivered_orders'] = paginator3.get_page(page3)
+        context['paginator3'] = paginator3
+        
+        paginator4 = Paginator(canceled, 2)
+        page4 = self.request.GET.get('page4', 1)
+        context['canceled_orders'] = paginator4.get_page(page4)
+        context['paginator4'] = paginator4
+        
+        # تعداد کل برای هر گروه
+        context['pending_count'] = pending.count()
+        context['active_count'] = processing_shipped.count()
+        context['delivered_count'] = delivered.count()
+        context['canceled_count'] = canceled.count()
+        
+        return context
+# -----------------------------------------------------------------------------------------
+class CustomerOrderDetailView(LoginRequiredMixin, HasCustomerAccesPermission, DetailView):
+    template_name = 'dashboard/customer/orders/order_detail.html'
+    context_object_name = 'order'
+
+    def get_queryset(self):
+        queryset = Order.objects.filter(user=self.request.user)
+        return queryset
+# -----------------------------------------------------------------------------------------

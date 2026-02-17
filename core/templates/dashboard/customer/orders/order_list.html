@@ -1,0 +1,435 @@
+{% extends "dashboard/customer/base.html" %}
+{% load static %}
+
+{% block content2 %}
+
+                <div class="col-lg-9">
+          <!-- Card -->
+          <div class="card">
+            <!-- Header -->
+            <div class="card-header border-bottom">
+                <form class="input-group input-group-merge" method="GET" action="{% url 'dashboard:customer:order-list' %}">
+                <div class="input-group-prepend input-group-text">
+                  <i class="bi-search"></i>
+                </div>
+                <input type="search" class="form-control" placeholder="شماره سفارش، نام محصول یا شهر جستجو کنید" 
+                       name="q" value="{{ search_query }}" aria-label="Search orders">
+              </form>
+            </div>
+            <!-- End Header -->
+
+            <!-- Body -->
+            <div class="card-body">
+              <!-- Nav Scroller -->
+              <div class="js-nav-scroller hs-nav-scroller-horizontal">
+                <span class="hs-nav-scroller-arrow-prev" style="display: none;">
+                  <a class="hs-nav-scroller-arrow-link" href="javascript:;">
+                    <i class="bi-chevron-left"></i>
+                  </a>
+                </span>
+
+                <span class="hs-nav-scroller-arrow-next" style="display: none;">
+                  <a class="hs-nav-scroller-arrow-link" href="javascript:;">
+                    <i class="bi-chevron-right"></i>
+                  </a>
+                </span>
+
+                <!-- Nav -->
+                <ul class="nav nav-segment nav-fill mb-7" id="featuresTab" role="tablist">
+                  <li class="nav-item" role="presentation">
+                    <a class="nav-link active" href="#accountOrdersOne" id="accountOrdersOne-tab" data-bs-toggle="tab"
+                      data-bs-target="#accountOrdersOne" role="tab" aria-controls="accountOrdersOne"
+                      aria-selected="true">سفارشات</a>
+                  </li>
+
+                  <li class="nav-item" role="presentation">
+                    <a class="nav-link" href="#accountOrdersTwo" id="accountOrdersTwo-tab" data-bs-toggle="tab"
+                      data-bs-target="#accountOrdersTwo" role="tab" aria-controls="accountOrdersTwo"
+                      aria-selected="false">سفارشات تحویل شده</a>
+                  </li>
+
+                  <li class="nav-item" role="presentation">
+                    <a class="nav-link" href="#accountOrdersThree" id="accountOrdersThree-tab" data-bs-toggle="tab"
+                      data-bs-target="#accountOrdersThree" role="tab" aria-controls="accountOrdersThree"
+                      aria-selected="false">سفارشات لغو شده</a>
+                  </li>
+                </ul>
+                <!-- End Nav -->
+              </div>
+              <!-- End Nav Scroller -->
+
+              <!-- Tab Content -->
+              <div class="tab-content" id="accountOrdersTabContent">
+                <div class="tab-pane fade show active" id="accountOrdersOne" role="tabpanel"
+                  aria-labelledby="accountOrdersOne-tab">
+                  {% if pending_count > 0 or active_count > 0 %}
+                  <!-- Select Group -->
+                  <div class="d-sm-flex align-items-sm-center mb-5">
+                    <div class="mb-2 mb-sm-0 me-3">
+                      <span><strong class="text-dark">{{ pending_count|add:active_count }} سفارش</strong></span>
+                    </div>
+                  </div>
+                  <!-- End Select Group -->
+
+                  <ul class="list-unstyled mb-5">
+                    <!-- Pending Orders -->
+                    {% for order in pending_orders.object_list %}
+                    <li class="card card-bordered shadow-none mb-3">
+                      <div class="card-body">
+                        <div class="row">
+                          <div class="col-6 col-md mb-3 mb-md-0">
+                            <small class="card-subtitle mb-0">جمع</small>
+                            <small class="text-dark fw-semibold">{{ order.total_price|floatformat:0 }} تومان</small>
+                          </div>
+                          <div class="col-6 col-md mb-3 mb-md-0">
+                            <small class="card-subtitle mb-0">وضعیت</small>
+                            <small class="text-dark fw-semibold"><span class="badge bg-warning">در انتظار</span></small>
+                          </div>
+                          <div class="col-6 col-md">
+                            <small class="card-subtitle mb-0">شماره سفارش</small>
+                            <small class="text-dark fw-semibold">#{{ order.id }}</small>
+                          </div>
+                          <div class="col-6 col-md">
+                            <small class="card-subtitle mb-0">زمان سفارش:</small>
+                            <small class="text-dark fw-semibold">{{ order.created_at|date:"d M، Y" }}</small>
+                          </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                          <div class="col-md-8">
+                            <div class="row gx-2">
+                              {% for item in order.items.all|slice:":3" %}
+                              <div class="col">
+                                {% if item.product.image %}
+                                  <img class="img-fluid" src="{{ item.product.image.url }}" alt="{{ item.product.name }}" style="max-height: 120px; object-fit: cover; border-radius: 4px;">
+                                {% else %}
+                                  <div class="bg-light d-flex align-items-center justify-content-center" style="height: 120px; border-radius: 4px;"><i class="bi-image text-muted"></i></div>
+                                {% endif %}
+                                <small class="text-muted d-block mt-1">{{ item.product.name|truncatewords:3 }}</small>
+                                <small class="text-dark fw-semibold">{{ item.quantity }}×{{ item.price|floatformat:0 }}</small>
+                              </div>
+                              {% endfor %}
+                            </div>
+                          </div>
+                          <div class="col-md-4">
+                            <div class="d-grid gap-2">
+                              <a class="btn btn-white btn-sm" href="">
+                                <i class="bi-receipt small me-2"></i> مشاهده فاکتور
+                              </a>
+                              <a class="btn btn-primary btn-sm" href="{% url 'dashboard:customer:order-detail' order.id %}">مشاهده سفارش</a>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+                    {% endfor %}
+
+                    <!-- Processing/Shipped Orders -->
+                    {% for order in processing_shipped_orders.object_list %}
+                    <li class="card card-bordered shadow-none mb-3">
+                      <div class="card-body">
+                        <div class="row">
+                          <div class="col-6 col-md mb-3 mb-md-0">
+                            <small class="card-subtitle mb-0">جمع</small>
+                            <small class="text-dark fw-semibold">{{ order.total_price|floatformat:0 }} تومان</small>
+                          </div>
+                          <div class="col-6 col-md mb-3 mb-md-0">
+                            <small class="card-subtitle mb-0">وضعیت</small>
+                            <small class="text-dark fw-semibold">
+                              {% if order.status == 2 %}
+                                <span class="badge bg-info">در حال پردازش</span>
+                              {% elif order.status == 3 %}
+                                <span class="badge bg-primary">درحال ارسال</span>
+                              {% endif %}
+                            </small>
+                          </div>
+                          <div class="col-6 col-md">
+                            <small class="card-subtitle mb-0">شماره سفارش</small>
+                            <small class="text-dark fw-semibold">#{{ order.id }}</small>
+                          </div>
+                          <div class="col-6 col-md">
+                            <small class="card-subtitle mb-0">زمان سفارش:</small>
+                            <small class="text-dark fw-semibold">{{ order.created_at|date:"d M، Y" }}</small>
+                          </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                          <div class="col-md-8">
+                            <div class="row gx-2">
+                              {% for item in order.items.all|slice:":3" %}
+                              <div class="col">
+                                {% if item.product.image %}
+                                  <img class="img-fluid" src="{{ item.product.image.url }}" alt="{{ item.product.name }}" style="max-height: 120px; object-fit: cover; border-radius: 4px;">
+                                {% else %}
+                                  <div class="bg-light d-flex align-items-center justify-content-center" style="height: 120px; border-radius: 4px;"><i class="bi-image text-muted"></i></div>
+                                {% endif %}
+                                <small class="text-muted d-block mt-1">{{ item.product.name|truncatewords:3 }}</small>
+                                <small class="text-dark fw-semibold">{{ item.quantity }}×{{ item.price|floatformat:0 }}</small>
+                              </div>
+                              {% endfor %}
+                            </div>
+                          </div>
+                          <div class="col-md-4">
+                            <div class="d-grid gap-2">
+                            <div class="d-grid gap-2">
+                              <a class="btn btn-white btn-sm" href="">
+                                <i class="bi-receipt small me-2"></i> مشاهده فاکتور
+                              </a>
+                              <a class="btn btn-primary btn-sm" href="{% url 'dashboard:customer:order-detail' order.id %}">مشاهده سفارش</a>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+                    {% endfor %}
+                  </ul>
+
+                  <!-- Pagination -->
+                  {% if paginator1.num_pages > 1 %}
+                  <nav aria-label="صفحه بندی سفارشات">
+                    <ul class="pagination justify-content-center">
+                      {% if pending_orders.has_previous %}
+                        <li class="page-item"><a class="page-link" href="{% url 'dashboard:customer:order-list' %}?q={{ search_query }}&page1=1">اول</a></li>
+                        <li class="page-item"><a class="page-link" href="{% url 'dashboard:customer:order-list' %}?q={{ search_query }}&page1={{ pending_orders.previous_page_number }}">قبلی</a></li>
+                      {% else %}
+                        <li class="page-item disabled"><a class="page-link" href="#">قبلی</a></li>
+                      {% endif %}
+                      
+                      {% for num in paginator1.page_range %}
+                        {% if num == pending_orders.number %}
+                          <li class="page-item active"><a class="page-link" href="#">{{ num }}</a></li>
+                        {% else %}
+                          <li class="page-item"><a class="page-link" href="{% url 'dashboard:customer:order-list' %}?q={{ search_query }}&page1={{ num }}">{{ num }}</a></li>
+                        {% endif %}
+                      {% endfor %}
+                      
+                      {% if pending_orders.has_next %}
+                        <li class="page-item"><a class="page-link" href="{% url 'dashboard:customer:order-list' %}?q={{ search_query }}&page1={{ pending_orders.next_page_number }}">بعد</a></li>
+                        <li class="page-item"><a class="page-link" href="{% url 'dashboard:customer:order-list' %}?q={{ search_query }}&page1={{ paginator1.num_pages }}">آخر</a></li>
+                      {% else %}
+                        <li class="page-item disabled"><a class="page-link" href="#">بعد</a></li>
+                      {% endif %}
+                    </ul>
+                  </nav>
+                  {% endif %}
+                  <!-- End Pagination -->
+                  {% else %}
+                  <!-- Empty State -->
+                  <div class="text-center content-space-1">
+                    <img class="avatar avatar-xl mb-3" src="{% static 'svg/illustrations/empty-state-no-data.svg' %}" alt="بدون داده">
+                    <p class="card-text">سفارشی برای نمایش وجود ندارد</p>
+                    <a class="btn btn-white btn-sm" href="#">شروع به خرید کنید</a>
+                  </div>
+                  {% endif %}
+                </div>
+
+                <div class="tab-pane fade" id="accountOrdersTwo" role="tabpanel" aria-labelledby="accountOrdersTwo-tab">
+                  {% if delivered_count > 0 %}
+                  <!-- Select Group -->
+                  <div class="d-sm-flex align-items-sm-center mb-5">
+                    <div class="mb-2 mb-sm-0 me-3">
+                      <span><strong class="text-dark">{{ delivered_count }} سفارش</strong></span>
+                    </div>
+                  </div>
+
+                  <ul class="list-unstyled mb-5">
+                    {% for order in delivered_orders.object_list %}
+                    <li class="card card-bordered shadow-none mb-3">
+                      <div class="card-body">
+                        <div class="row">
+                          <div class="col-6 col-md mb-3 mb-md-0">
+                            <small class="card-subtitle mb-0">جمع</small>
+                            <small class="text-dark fw-semibold">{{ order.total_price|floatformat:0 }} تومان</small>
+                          </div>
+                          <div class="col-6 col-md mb-3 mb-md-0">
+                            <small class="card-subtitle mb-0">وضعیت</small>
+                            <small class="text-dark fw-semibold"><span class="badge bg-success">تحویل شده</span></small>
+                          </div>
+                          <div class="col-6 col-md">
+                            <small class="card-subtitle mb-0">شماره سفارش</small>
+                            <small class="text-dark fw-semibold">#{{ order.id }}</small>
+                          </div>
+                          <div class="col-6 col-md">
+                            <small class="card-subtitle mb-0">زمان سفارش:</small>
+                            <small class="text-dark fw-semibold">{{ order.created_at|date:"d M، Y" }}</small>
+                          </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                          <div class="col-md-8">
+                            <div class="row gx-2">
+                              {% for item in order.items.all|slice:":3" %}
+                              <div class="col">
+                                {% if item.product.image %}
+                                  <img class="img-fluid" src="{{ item.product.image.url }}" alt="{{ item.product.name }}" style="max-height: 120px; object-fit: cover; border-radius: 4px;">
+                                {% else %}
+                                  <div class="bg-light d-flex align-items-center justify-content-center" style="height: 120px; border-radius: 4px;"><i class="bi-image text-muted"></i></div>
+                                {% endif %}
+                                <small class="text-muted d-block mt-1">{{ item.product.name|truncatewords:3 }}</small>
+                                <small class="text-dark fw-semibold">{{ item.quantity }}×{{ item.price|floatformat:0 }}</small>
+                              </div>
+                              {% endfor %}
+                            </div>
+                          </div>
+                          <div class="col-md-4">
+                                <div class="d-grid gap-2">
+                              <a class="btn btn-white btn-sm" href="">
+                                <i class="bi-receipt small me-2"></i> مشاهده فاکتور
+                              </a>
+                              <a class="btn btn-primary btn-sm" href="{% url 'dashboard:customer:order-detail' order.id %}">مشاهده سفارش</a>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+                    {% endfor %}
+                  </ul>
+
+                  <!-- Pagination -->
+                  {% if paginator3.num_pages > 1 %}
+                  <nav aria-label="صفحه بندی سفارشات تحویل شده">
+                    <ul class="pagination justify-content-center">
+                      {% if delivered_orders.has_previous %}
+                        <li class="page-item"><a class="page-link" href="{% url 'dashboard:customer:order-list' %}?q={{ search_query }}&page3=1">اول</a></li>
+                        <li class="page-item"><a class="page-link" href="{% url 'dashboard:customer:order-list' %}?q={{ search_query }}&page3={{ delivered_orders.previous_page_number }}">قبلی</a></li>
+                      {% else %}
+                        <li class="page-item disabled"><a class="page-link" href="#">قبلی</a></li>
+                      {% endif %}
+                      
+                      {% for num in paginator3.page_range %}
+                        {% if num == delivered_orders.number %}
+                          <li class="page-item active"><a class="page-link" href="#">{{ num }}</a></li>
+                        {% else %}
+                          <li class="page-item"><a class="page-link" href="{% url 'dashboard:customer:order-list' %}?q={{ search_query }}&page3={{ num }}">{{ num }}</a></li>
+                        {% endif %}
+                      {% endfor %}
+                      
+                      {% if delivered_orders.has_next %}
+                        <li class="page-item"><a class="page-link" href="{% url 'dashboard:customer:order-list' %}?q={{ search_query }}&page3={{ delivered_orders.next_page_number }}">بعد</a></li>
+                        <li class="page-item"><a class="page-link" href="{% url 'dashboard:customer:order-list' %}?q={{ search_query }}&page3={{ paginator3.num_pages }}">آخر</a></li>
+                      {% else %}
+                        <li class="page-item disabled"><a class="page-link" href="#">بعد</a></li>
+                      {% endif %}
+                    </ul>
+                  </nav>
+                  {% endif %}
+                  {% else %}
+                  <!-- Empty State -->
+                  <div class="text-center content-space-1">
+                    <img class="avatar avatar-xl mb-3" src="{% static 'svg/illustrations/empty-state-no-data.svg' %}" alt="بدون داده">
+                    <p class="card-text">هیچ داده ای برای نمایش وجود ندارد</p>
+                    <a class="btn btn-white btn-sm" href="#">شروع به خرید کنید</a>
+                  </div>
+                  {% endif %}
+                </div>
+
+                <div class="tab-pane fade" id="accountOrdersThree" role="tabpanel"
+                  aria-labelledby="accountOrdersThree-tab">
+                  {% if canceled_count > 0 %}
+                  <!-- Select Group -->
+                  <div class="d-sm-flex align-items-sm-center mb-5">
+                    <div class="mb-2 mb-sm-0 me-3">
+                      <span><strong class="text-dark">{{ canceled_count }} سفارش</strong></span>
+                    </div>
+                  </div>
+
+                  <ul class="list-unstyled mb-5">
+                    {% for order in canceled_orders.object_list %}
+                    <li class="card card-bordered shadow-none mb-3">
+                      <div class="card-body">
+                        <div class="row">
+                          <div class="col-6 col-md mb-3 mb-md-0">
+                            <small class="card-subtitle mb-0">جمع</small>
+                            <small class="text-dark fw-semibold">{{ order.total_price|floatformat:0 }} تومان</small>
+                          </div>
+                          <div class="col-6 col-md mb-3 mb-md-0">
+                            <small class="card-subtitle mb-0">وضعیت</small>
+                            <small class="text-dark fw-semibold"><span class="badge bg-danger">لغو شده</span></small>
+                          </div>
+                          <div class="col-6 col-md">
+                            <small class="card-subtitle mb-0">شماره سفارش</small>
+                            <small class="text-dark fw-semibold">#{{ order.id }}</small>
+                          </div>
+                          <div class="col-6 col-md">
+                            <small class="card-subtitle mb-0">زمان سفارش:</small>
+                            <small class="text-dark fw-semibold">{{ order.created_at|date:"d M، Y" }}</small>
+                          </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                          <div class="col-md-8">
+                            <div class="row gx-2">
+                              {% for item in order.items.all|slice:":3" %}
+                              <div class="col">
+                                {% if item.product.image %}
+                                  <img class="img-fluid" src="{{ item.product.image.url }}" alt="{{ item.product.name }}" style="max-height: 120px; object-fit: cover; border-radius: 4px;">
+                                {% else %}
+                                  <div class="bg-light d-flex align-items-center justify-content-center" style="height: 120px; border-radius: 4px;"><i class="bi-image text-muted"></i></div>
+                                {% endif %}
+                                <small class="text-muted d-block mt-1">{{ item.product.name|truncatewords:3 }}</small>
+                                <small class="text-dark fw-semibold">{{ item.quantity }}×{{ item.price|floatformat:0 }}</small>
+                              </div>
+                              {% endfor %}
+                            </div>
+                          </div>
+                          <div class="col-md-4">
+                                 <div class="d-grid gap-2">
+                              <a class="btn btn-white btn-sm" href="">
+                                <i class="bi-receipt small me-2"></i> مشاهده فاکتور
+                              </a>
+                              <a class="btn btn-primary btn-sm" href="{% url 'dashboard:customer:order-detail' order.id %}">مشاهده سفارش</a>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+                    {% endfor %}
+                  </ul>
+
+                  <!-- Pagination -->
+                  {% if paginator4.num_pages > 1 %}
+                  <nav aria-label="صفحه بندی سفارشات لغو شده">
+                    <ul class="pagination justify-content-center">
+                      {% if canceled_orders.has_previous %}
+                        <li class="page-item"><a class="page-link" href="{% url 'dashboard:customer:order-list' %}?q={{ search_query }}&page4=1">اول</a></li>
+                        <li class="page-item"><a class="page-link" href="{% url 'dashboard:customer:order-list' %}?q={{ search_query }}&page4={{ canceled_orders.previous_page_number }}">قبلی</a></li>
+                      {% else %}
+                        <li class="page-item disabled"><a class="page-link" href="#">قبلی</a></li>
+                      {% endif %}
+                      
+                      {% for num in paginator4.page_range %}
+                        {% if num == canceled_orders.number %}
+                          <li class="page-item active"><a class="page-link" href="#">{{ num }}</a></li>
+                        {% else %}
+                          <li class="page-item"><a class="page-link" href="{% url 'dashboard:customer:order-list' %}?q={{ search_query }}&page4={{ num }}">{{ num }}</a></li>
+                        {% endif %}
+                      {% endfor %}
+                      
+                      {% if canceled_orders.has_next %}
+                        <li class="page-item"><a class="page-link" href="{% url 'dashboard:customer:order-list' %}?q={{ search_query }}&page4={{ canceled_orders.next_page_number }}">بعد</a></li>
+                        <li class="page-item"><a class="page-link" href="{% url 'dashboard:customer:order-list' %}?q={{ search_query }}&page4={{ paginator4.num_pages }}">آخر</a></li>
+                      {% else %}
+                        <li class="page-item disabled"><a class="page-link" href="#">بعد</a></li>
+                      {% endif %}
+                    </ul>
+                  </nav>
+                  {% endif %}
+                  {% else %}
+                  <!-- Empty State -->
+                  <div class="text-center content-space-1">
+                    <img class="avatar avatar-xl mb-3" src="{% static 'svg/illustrations/empty-state-no-data.svg' %}" alt="بدون داده">
+                    <p class="card-text">هیچ داده ای برای نمایش وجود ندارد</p>
+                    <a class="btn btn-white btn-sm" href="#">شروع به خرید کنید</a>
+                  </div>
+                  {% endif %}
+                </div>
+              </div>
+              <!-- End Tab Content -->
+            </div>
+            <!-- End Body -->
+          </div>
+          <!-- End Card -->
+        </div>
+
+
+{% endblock content2 %}
