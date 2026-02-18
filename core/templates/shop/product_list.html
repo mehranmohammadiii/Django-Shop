@@ -190,11 +190,13 @@
                   {% else %}
                     <img class="card-img-top" src="{% static 'img/300x180/img1.jpg' %}" alt="Image Description" style="height: 250px; object-fit: cover;">
                   {% endif %}
-
+                  
                   <div class="card-pinned-top-end">
-                    <button type="button" class="btn btn-outline-secondary btn-xs btn-icon rounded-circle" data-bs-toggle="tooltip" data-bs-placement="top" title="افزودن به علایق">
+                    {% if request.user.is_authenticated %}
+                    <button onclick="add_wishlist_item(this, {{product.id}})" type="button" class=" {% if product.id in wishlist %}btn btn-danger{% else %}btn btn-outline-secondary{% endif %} btn-xs btn-icon rounded-circle" data-bs-toggle="tooltip" data-bs-placement="top" title="افزودن به علایق">
                       <i class="bi-heart"></i>
                     </button>
+                    {% endif %}
                   </div>
                 </div>
 
@@ -431,6 +433,35 @@ function changeItemsPerPage(selectElement) {
   
   window.location = url.toString();
 }
+
+{% comment %} ------------------------------- {% endcomment %}
+
+function add_wishlist_item(button, productId) {
+  const url = "{% url 'shop:add_or_remove_wishlist' product_id=0 %}".replace('0', productId);
+  
+  fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': '{{ csrf_token }}'
+    },
+    body: JSON.stringify({ product_id: productId })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.status === 'added') {
+      button.classList.add('btn-danger');
+      button.classList.remove('btn-outline-secondary');
+    } else if (data.status === 'removed') {
+      button.classList.remove('btn-danger');
+      button.classList.add('btn-outline-secondary');
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+  });
+}
+
 </script>
 
 {% endblock content %}

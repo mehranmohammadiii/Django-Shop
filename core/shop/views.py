@@ -6,8 +6,11 @@ from django.views.generic import (
     DeleteView
 )
 from django.db.models import Q
-from .models import Product, ProductStatus, Category
-
+from .models import Product, ProductStatus, Category, wishlist
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views import View
+from django.http import JsonResponse
+import json
 class ShopProductListView(ListView):
     """
     Display active products list with pagination support and filtering.
@@ -78,7 +81,10 @@ class ShopProductListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        if self.request.user.is_authenticated:
+            context['wishlist'] = wishlist.objects.filter(user=self.request.user).values_list('product_id', flat=True)
         context['categories'] = Category.objects.all()
+
         return context
 # ----------------------------------------------------------------------
 class ShopProductDetailView(DetailView):
@@ -110,4 +116,24 @@ class ShopProductDetailView(DetailView):
         
         context['similar_products'] = similar_products
         return context
+# ----------------------------------------------------------------------
+class AddOrRemoveWishlistView(LoginRequiredMixin, View):
+    def post(self, request, product_id):
+        try:
+            data = json.loads(request.body)
+            product_id = data.get('product_id', product_id)
+        except:
+            product_id = request.POST.get('product_id', product_id)
+        
+        product = Product.objects.get(id=product_id)
+        wishlist_item, created = wishlist.objects.get_or_create(
+            user=request.user, 
+            product=product
+        )
+        
+        if created:
+            return JsonResponse({'status': 'added'})
+        else:
+            wishlist_item.delete()
+            return JsonResponse({'status': 'removed'})
 # ----------------------------------------------------------------------

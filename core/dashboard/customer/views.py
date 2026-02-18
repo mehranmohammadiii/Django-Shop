@@ -11,6 +11,7 @@ from django.contrib.auth import views as auth_view
 from .forms import CustomerPasswordChangeForm,CustomerProfileEditForm,CustomerAddressForm
 from accounts.models import Profile
 from order.models import UserAddress, Order
+from shop.models import wishlist
 # -----------------------------------------------------------------------------------------
 class CustomerDashboardHomeView(LoginRequiredMixin,HasCustomerAccesPermission, TemplateView):
     template_name = 'dashboard/customer/home.html'
@@ -195,4 +196,28 @@ class CustomerOrderDetailView(LoginRequiredMixin, HasCustomerAccesPermission, De
     def get_queryset(self):
         queryset = Order.objects.filter(user=self.request.user)
         return queryset
+# -----------------------------------------------------------------------------------------
+class CustomerWishlistView(LoginRequiredMixin, HasCustomerAccesPermission, TemplateView):
+    template_name = 'dashboard/customer/wishlist/wishlist.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        wishlist_items = wishlist.objects.filter(user=self.request.user).select_related('product')
+        context['wishlist_items'] = wishlist_items
+        return context    
+# -----------------------------------------------------------------------------------------
+class CustomerWishlistRemoveView(LoginRequiredMixin, HasCustomerAccesPermission, DeleteView):
+    model = wishlist
+    success_url = reverse_lazy('dashboard:customer:wishlist')
+
+    def get_queryset(self):
+        return wishlist.objects.filter(user=self.request.user)
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        product_name = self.object.product.name
+        response = super().post(request, *args, **kwargs)
+        messages.success(request, f'محصول "{product_name}" با موفقیت از لیست علاقه‌مندی‌ها حذف شد.')
+        return response
+# -----------------------------------------------------------------------------------------
 # -----------------------------------------------------------------------------------------

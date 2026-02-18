@@ -1,0 +1,100 @@
+{% extends "dashboard/customer/base.html" %}
+{% load static %}
+
+{% block content2 %}
+
+        <div class="col-lg-9">
+          <!-- Card -->
+          <div class="card">
+            <div class="card-header d-sm-flex justify-content-sm-between align-items-sm-center border-bottom">
+              <h5 class="card-header-title">لیست علاقه مندی ها</h5>
+              <span>{{ wishlist_items.count }} مورد</span>
+            </div>
+
+            <!-- Body -->
+            <div class="card-body">
+
+              {% if wishlist_items %}
+              <!-- List Group -->
+              <ul class="list-group list-group-flush list-group-no-gutters">
+                {% for wishlist_item in wishlist_items %}
+                <!-- Item -->
+                <li class="list-group-item">
+                  <div class="d-flex">
+                    <div class="flex-shrink-0">
+                      {% if wishlist_item.product.image %}
+                        <img class="avatar avatar-xl avatar-4x3" src="{{ wishlist_item.product.image.url }}"
+                          alt="{{ wishlist_item.product.name }}">
+                      {% else %}
+                        <img class="avatar avatar-xl avatar-4x3" src="{% static 'img/default-product.jpg' %}"
+                          alt="تصویر نامعلوم">
+                      {% endif %}
+                    </div>
+
+                    <div class="flex-grow-1 ms-3">
+                      <div class="row">
+                        <div class="col-sm-7 mb-3 mb-sm-0">
+                          <h5><a class="text-dark" href="{% url 'shop:product_detail' wishlist_item.product.slug %}">{{ wishlist_item.product.name }}</a></h5>
+
+                          <div class="d-grid gap-1">
+                            <div class="text-body">
+                              <span class="small">قیمت:</span>
+                              <span class="fw-semibold small">{{ wishlist_item.product.price }} تومان</span>
+                            </div>
+
+                            {% if wishlist_item.product.discount_price > 0 %}
+                            <div class="text-body">
+                              <span class="small">قیمت با تخفیف:</span>
+                              <span class="fw-semibold small text-danger">{{ wishlist_item.product.discount_price }} تومان</span>
+                            </div>
+                            {% endif %}
+
+                            <div class="text-body">
+                              <span class="small">دسته‌بندی:</span>
+                              <span class="fw-semibold small">
+                                {% for category in wishlist_item.product.category.all %}
+                                  {{ category.name }}{% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                        <!-- End Col -->
+                        <div class="col-sm-3">
+                          <div class="col-auto">
+                            <div class="d-grid gap-2">
+                              <form method="post" action="{% url 'dashboard:customer:wishlist-remove' wishlist_item.id %}" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="link-sm link-danger small" style="border:none; background:none; cursor:pointer;">
+                                  <i class="bi-trash me-1"></i> حذف
+                                </button>
+                              </form>
+                            </div>
+                          </div>
+                          <!-- End Col -->
+                        </div>
+                        <!-- End Row -->
+                      </div>
+                    </div>
+                    <!-- End Row -->
+                  </div>
+                </li>
+                <!-- End Item -->
+                {% endfor %}
+              </ul>
+              <!-- End List Group -->
+              {% else %}
+              <div class="alert alert-info text-center">
+                <p>هیچ محصولی در لیست علاقه مندی شما وجود ندارد.</p>
+              </div>
+              {% endif %}
+
+            </div>
+            <!-- End Body -->
+
+            <a class="card-footer card-link text-center border-top" href="">به خرید ادامه دهید</a>
+          </div>
+          <!-- End Card -->
+        </div>
+
+{% endblock content2 %}

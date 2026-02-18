@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Product, Category, ProductImage
+from .models import Product, Category, ProductImage, wishlist
 
 class ProductAdmin(admin.ModelAdmin):
     list_display = ('name', 'price', 'stock', 'status', 'created_at')
@@ -16,6 +16,10 @@ class ProductImageAdmin(admin.ModelAdmin):
     list_display = ('product', 'alt_text', 'created_at')
     search_fields = ('product__name', 'alt_text')
 
+class WishListAdmin(admin.ModelAdmin):
+    list_display = ('id','user','product')
+
+admin.site.register(wishlist, WishListAdmin)
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(ProductImage, ProductImageAdmin)
 admin.site.register(Product, ProductAdmin)

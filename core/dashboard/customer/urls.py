@@ -17,4 +17,7 @@ urlpatterns = [
     path('order/list/', views.CustomerOrderListView.as_view(), name='order-list'),
     path('order/detail/<int:pk>/', views.CustomerOrderDetailView.as_view(), name='order-detail'),
 
+    path('wishlist/', views.CustomerWishlistView.as_view(), name='wishlist'),
+    path('wishlist/remove/<int:pk>/', views.CustomerWishlistRemoveView.as_view(), name='wishlist-remove'),
+
 ]
