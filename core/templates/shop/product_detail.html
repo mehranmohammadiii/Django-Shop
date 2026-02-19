@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
-{% load static %}
-{% load humanize %}
+{% load static %} 
+{% load humanize %} 
 
 {% block content %}
 
@@ -92,12 +92,17 @@
         <div class="col-md-5">
           <!-- Rating -->
           <a class="d-flex gap-1 mb-4" href="#reviewSection">
-            <img src="{% static 'svg/illustrations/star.svg' %}" alt="Review rating" width="16">
-            <img src="{% static 'svg/illustrations/star.svg' %}" alt="Review rating" width="16">
-            <img src="{% static 'svg/illustrations/star.svg' %}" alt="Review rating" width="16">
-            <img src="{% static 'svg/illustrations/star.svg' %}" alt="Review rating" width="16">
-            <img src="{% static 'svg/illustrations/star.svg' %}" alt="Review rating" width="16">
-            <span class="ms-1">287 نظر</span>
+            <div class="d-flex gap-1">
+              {% for i in "12345" %}
+                {% if i|add:0 <= product.avg_rating|add:0 %}
+                  <i class="bi-star-fill text-warning"></i>
+                {% else %}
+                  <i class="bi-star text-muted"></i>
+                {% endif %}
+              {% endfor %}
+            </div>
+            <span class="ms-2 fw-semibold">{{ product.avg_rating|default:0|floatformat:1 }}</span>
+            <span class="ms-1">{{ reviews|length }} نظر</span>
           </a>
           <!-- End Rating -->
 
@@ -524,20 +529,22 @@
                 <div class="d-flex justify-content-center">
                   <div class="d-flex align-items-center">
                     <div class="flex-shrink-0">
-                      <span class="display-4 text-white">4.7</span>
+                      <span class="display-4 text-white">{{ product.avg_rating|default:0|floatformat:1 }}</span>
                     </div>
 
                     <div class="flex-grow-1 ms-3">
                       <!-- Rating -->
                       <div class="d-flex gap-1 small">
-                        <img src="{% static 'svg/illustrations/star.svg' %}" alt="Review rating" width="16">
-                        <img src="{% static 'svg/illustrations/star.svg' %}" alt="Review rating" width="16">
-                        <img src="{% static 'svg/illustrations/star.svg' %}" alt="Review rating" width="16">
-                        <img src="{% static 'svg/illustrations/star.svg' %}" alt="Review rating" width="16">
-                        <img src="{% static 'svg/illustrations/star.svg' %}" alt="Review rating" width="16">
+                        {% for i in "12345" %}
+                          {% if i|add:0 <= product.avg_rating|add:0 %}
+                            <i class="bi-star-fill text-warning"></i>
+                          {% else %}
+                            <i class="bi-star text-muted"></i>
+                          {% endif %}
+                        {% endfor %}
                       </div>
                       <!-- End Rating -->
-                      <span class="text-white">287 نظر</span>
+                      <span class="text-white">{{ reviews|length }} نظر</span>
                     </div>
                   </div>
                 </div>
@@ -678,173 +685,74 @@
                   </select>
                   <!-- End Select -->
                 </div>
+
+                <div class="col-sm-auto">
+                    <button type="button" class="btn btn-primary btn-transition rounded-pill" data-bs-toggle="modal" data-bs-target="#reviewModal">ثبت دیدگاه</button>
+                </div>
                 <!-- End Col -->
               </div>
               <!-- End Row -->
             </div>
             <!-- End Heading -->
-
             <!-- Comment -->
             <ul class="list-comment list-comment-divider mb-5">
-              <!-- Item -->
-              <li class="list-comment-item">
-                <div class="d-flex gap-1 mb-3">
-                  <img src="{% static 'svg/illustrations/star.svg' %}" alt="Review rating" width="16">
-                  <img src="{% static 'svg/illustrations/star.svg' %}" alt="Review rating" width="16">
-                  <img src="{% static 'svg/illustrations/star.svg' %}" alt="Review rating" width="16">
-                  <img src="{% static 'svg/illustrations/star.svg' %}" alt="Review rating" width="16">
-                  <img src="{% static 'svg/illustrations/star.svg' %}" alt="Review rating" width="16">
-                </div>
-
-                <!-- Media -->
-                <div class="d-flex align-items-center mb-3">
-                  <div class="flex-shrink-0">
-                    <img class="avatar avatar-sm avatar-circle" src="{% static 'img/160x160/img9.jpg' %}" alt="Image Description">
+              {% if reviews %}
+                {% for review in reviews %}
+                <li class="list-comment-item">
+                  <!-- Stars -->
+                  <div class="d-flex gap-1 mb-3">
+                    {% for i in "12345" %}
+                      {% if i <= review.rating|stringformat:"s" %}
+                        <img src="{% static 'svg/illustrations/star.svg' %}" alt="Review rating" width="16">
+                      {% else %}
+                        <img src="{% static 'svg/illustrations/star-muted.svg' %}" alt="Review rating" width="16">
+                      {% endif %}
+                    {% endfor %}
                   </div>
 
-                  <div class="flex-grow-1 ms-3">
-                    <div class="d-flex justify-content-between align-items-center">
-                      <h5 class="mb-0">کریستینا کری</h5>
-                      <span class="d-block small text-muted">آوریل 3, 2019</span>
+                  <!-- Media -->
+                  <div class="d-flex align-items-center mb-3">
+                    <div class="flex-shrink-0">
+                      {% if review.user.user_profile.image %}
+                        <img class="avatar avatar-sm avatar-circle" src="{{ review.user.user_profile.image.url }}" alt="{{ review.user.email }}">
+                      {% else %}
+                        <div class="avatar avatar-sm avatar-circle bg-primary text-white d-flex align-items-center justify-content-center">
+                          <span>{{ review.user.first_name|first|default:review.user.email|first|upper }}</span>
+                        </div>
+                      {% endif %}
+                    </div>
+
+                    <div class="flex-grow-1 ms-3">
+                      <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">{{ review.user.first_name|default:review.user.email }}</h5>
+                        <span class="d-block small text-muted">{{ review.created_at|date:"j b، Y" }}</span>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <!-- End Media -->
+                  <!-- End Media -->
 
-                <div class="mb-5">
-                  <p>من این کلاه را برای دوست پسرم خریدم، اما بعد متوجه شدم که او به من خیانت کرده است، بنابراین آن را نگه داشتم و دوستش دارم! من همیشه آن را می پوشم و هیچ مشکلی از نظر تناسب وجود ندارد، حتی اگر کلاه "مردانه" است.</p>
-                </div>
-
-                <div class="mb-2">
-                  <span class="text-dark fw-semibold">کریستینا</span>
-                  <span>- خرید تایید شده</span>
-                </div>
-
-                <!-- Media -->
-                <div class="d-flex align-items-center">
-                  <span class="small me-2">آیا این مفید بود؟</span>
-
-                  <div class="d-flex gap-2">
-                    <a class="btn btn-white btn-xs" href="javascript:;">
-                      <i class="bi-hand-thumbs-up me-1"></i> Yes <span>(45)</span>
-                    </a>
-                    <a class="btn btn-white btn-xs" href="javascript:;">
-                      <i class="bi-hand-thumbs-down me-1"></i> نه <span>(21)</span>
-                    </a>
-                  </div>
-                </div>
-                <!-- End Media -->
-              </li>
-              <!-- End Item -->
-
-              <!-- Item -->
-              <li class="list-comment-item">
-                <div class="d-flex gap-1 mb-3">
-                  <img src="{% static 'svg/illustrations/star.svg' %}" alt="Review rating" width="16">
-                  <img src="{% static 'svg/illustrations/star.svg' %}" alt="Review rating" width="16">
-                  <img src="{% static 'svg/illustrations/star.svg' %}" alt="Review rating" width="16">
-                  <img src="{% static 'svg/illustrations/star.svg' %}" alt="Review rating" width="16">
-                  <img src="{% static 'svg/illustrations/star.svg' %}" alt="Review rating" width="16">
-                </div>
-
-                <!-- Media -->
-                <div class="d-flex align-items-center mb-3">
-                  <div class="flex-shrink-0">
-                    <img class="avatar avatar-sm avatar-circle" src="{% static 'img/160x160/img1.jpg' %}" alt="Image Description">
+                  <div class="mb-5">
+                    <p>{{ review.comment }}</p>
                   </div>
 
-                  <div class="flex-grow-1 ms-3">
-                    <div class="d-flex justify-content-between align-items-center">
-                      <h5 class="mb-0">هایلی</h5>
-                      <span class="d-block small text-muted">ژانویه 19, 2019</span>
-                    </div>
+                  <div class="mb-2">
+                    <span class="text-dark fw-semibold">{{ review.user.user_profile.first_name|default:review.user.email }}</span>
+                    <span>- خرید تایید شده</span>
                   </div>
-                </div>
-                <!-- End Media -->
-
-                <div class="mb-5">
-                  <p>جنس آن عالی است و کلاه راحت و شیک است.</p>
-                </div>
-
-                <div class="mb-2">
-                  <span class="text-dark fw-semibold">هایلی</span>
-                  <span>- خرید تایید شده</span>
-                </div>
-
-                <!-- Media -->
-                <div class="d-flex align-items-center">
-                  <span class="small me-2">آیا این مفید بود؟</span>
-
-                  <div class="d-flex gap-2">
-                    <a class="btn btn-white btn-xs" href="javascript:;">
-                      <i class="bi-hand-thumbs-up me-1"></i> بله <span>(2)</span>
-                    </a>
-                    <a class="btn btn-white btn-xs" href="javascript:;">
-                      <i class="bi-hand-thumbs-down me-1"></i> نه <span>(0)</span>
-                    </a>
-                  </div>
-                </div>
-                <!-- End Media -->
-              </li>
-              <!-- End Item -->
-
-              <!-- Item -->
-              <li class="list-comment-item">
-                <div class="d-flex gap-1 mb-3">
-                  <img src="{% static 'svg/illustrations/star.svg' %}" alt="Review rating" width="16">
-                  <img src="{% static 'svg/illustrations/star.svg' %}" alt="Review rating" width="16">
-                  <img src="{% static 'svg/illustrations/star.svg' %}" alt="Review rating" width="16">
-                  <img src="{% static 'svg/illustrations/star.svg' %}" alt="Review rating" width="16">
-                  <img src="{% static 'svg/illustrations/star.svg' %}" alt="Review rating" width="16">
-                </div>
-
-                <!-- Media -->
-                <div class="d-flex align-items-center mb-3">
-                  <div class="flex-shrink-0">
-                    <img class="avatar avatar-sm avatar-circle" src="{% static 'img/160x160/img8.jpg' %}" alt="Image Description">
-                  </div>
-
-                  <div class="flex-grow-1 ms-3">
-                    <div class="d-flex justify-content-between align-items-center">
-                      <h5 class="mb-0">کریزل</h5>
-                      <span class="d-block small text-muted">دسامبر 21, 2018</span>
-                    </div>
-                  </div>
-                </div>
-                <!-- End Media -->
-
-                <div class="mb-5">
-                  <p>کلاهی واقعا خوش ساخت به نظر عالی می رسد و به همان خوبی می پوشد. یک پایه عالی در کلاه های توپ.</p>
-                </div>
-
-                <div class="mb-2">
-                  <span class="text-dark fw-semibold">کریزل</span>
-                  <span>- خرید تایید شده</span>
-                </div>
-
-                <!-- Media -->
-                <div class="d-flex align-items-center">
-                  <span class="small me-2">آیا این مفید بود؟</span>
-
-                  <div class="d-flex gap-2">
-                    <a class="btn btn-white btn-xs" href="javascript:;">
-                      <i class="bi-hand-thumbs-up me-1"></i> بله <span>(0)</span>
-                    </a>
-                    <a class="btn btn-white btn-xs" href="javascript:;">
-                      <i class="bi-hand-thumbs-down me-1"></i> نه <span>(0)</span>
-                    </a>
-                  </div>
-                </div>
-                <!-- End Media -->
-              </li>
-              <!-- End Item -->
+                </li>
+                {% endfor %}
+              {% else %}
+                <li class="list-comment-item">
+                  <p class="text-muted text-center">هیچ نظری برای این محصول ثبت نشده است</p>
+                </li>
+              {% endif %}
             </ul>
             <!-- End Comment -->
 
-            <div class="d-sm-flex justify-content-sm-end gap-2">
+            {% comment %} <div class="d-sm-flex justify-content-sm-end gap-2">
               <a class="btn btn-link" href="#">ادامه مطلب <i class="bi-chevron-left small me-1"></i></a>
               <button type="button" class="btn btn-primary btn-transition rounded-pill">یک بررسی بنویسید</button>
-            </div>
+            </div> {% endcomment %}
           </div>
         </div>
         <!-- End Col -->
@@ -883,6 +791,54 @@
       </div>
     </div>
     <!-- End Subscribe -->
+
+    <!-- Review Modal -->
+    <div class="modal fade" id="reviewModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <!-- Header -->
+          <div class="modal-header border-bottom">
+            <h5 class="modal-title">ثبت دیدگاه</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <!-- End Header -->
+
+          <!-- Body -->
+          <div class="modal-body">
+            <form id="reviewForm" method="POST" action="{% url 'reviews:submit_review' %}">
+              {% csrf_token %}
+              <input type="hidden" name="product" value="{{ product.id }}">
+
+              <!-- Rating -->
+              <div class="mb-3">
+                <label for="ratingSelect" class="form-label">امتیاز</label>
+                <select class="form-select" id="ratingSelect" name="rating" required>
+                  <option value="">انتخاب کنید</option>
+                  <option value="1">1 - خیلی ضعیف</option>
+                  <option value="2">2 - ضعیف</option>
+                  <option value="3">3 - متوسط</option>
+                  <option value="4">4 - خوب</option>
+                  <option value="5">5 - عالی</option>
+                </select>
+              </div>
+
+              <!-- Comment -->
+              <div class="mb-3">
+                <label for="commentText" class="form-label">نظر شما</label>
+                <textarea class="form-control" id="commentText" name="comment" rows="4" placeholder="نظر خود را بنویسید..." required></textarea>
+              </div>
+
+              <!-- Submit Button -->
+              <div class="d-grid">
+                <button type="submit" class="btn btn-primary">ثبت دیدگاه</button>
+              </div>
+            </form>
+          </div>
+          <!-- End Body -->
+        </div>
+      </div>
+    </div>
+    <!-- End Review Modal -->
 
 {% endblock content %}
 

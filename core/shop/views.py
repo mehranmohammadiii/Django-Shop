@@ -7,6 +7,7 @@ from django.views.generic import (
 )
 from django.db.models import Q
 from .models import Product, ProductStatus, Category, wishlist
+from reviews.models import Review, ReviewStatusType
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
 from django.http import JsonResponse
@@ -114,7 +115,14 @@ class ShopProductDetailView(DetailView):
             id=product.id
         ).prefetch_related('images', 'category').distinct()[:4]
         
+        # Get approved reviews
+        reviews = Review.objects.filter(
+            product=product,
+            status=ReviewStatusType.APPROVED.value
+        ).select_related('user').order_by('-created_at')
+        
         context['similar_products'] = similar_products
+        context['reviews'] = reviews
         return context
 # ----------------------------------------------------------------------
 class AddOrRemoveWishlistView(LoginRequiredMixin, View):
