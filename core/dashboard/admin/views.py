@@ -13,6 +13,7 @@ from django.db.models import Q
 from order.models import Order
 from django.core.paginator import Paginator
 from accounts.models import User
+from reviews.models import Review, ReviewStatusType
 # -------------------------------------------------------------------------------------------  
 class AdminDashboardHomeView(LoginRequiredMixin,HasAdminAccesPermission, TemplateView):
     template_name = 'dashboard/admin/home.html'
@@ -300,5 +301,56 @@ class AdminUserListView(LoginRequiredMixin, HasAdminAccesPermission, TemplateVie
         context['paginator'] = paginator
         
         return context
+# -------------------------------------------------------------------------------------------  
+class AdminReviewListView(LoginRequiredMixin, HasAdminAccesPermission, TemplateView):
+    template_name = 'dashboard/admin/reviews/review_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        search_query = self.request.GET.get('q', '').strip()
+        context['search_query'] = search_query
+
+        reviews = Review.objects.all().select_related('user', 'product').order_by('-created_at')
+        
+        if search_query:
+            reviews = reviews.filter(
+                Q(user__email__icontains=search_query) |
+                Q(product__name__icontains=search_query) |
+                Q(product__category__name__icontains=search_query)
+            ).distinct()
+        
+        # Pagination
+        paginator = Paginator(reviews, 10)
+        page = self.request.GET.get('page', 1)
+        context['reviews'] = paginator.get_page(page)
+        context['paginator'] = paginator
+        
+        # Count by status
+        context['pending_count'] = Review.objects.filter(status=ReviewStatusType.PENDING.value).count()
+        context['approved_count'] = Review.objects.filter(status=ReviewStatusType.APPROVED.value).count()
+        context['rejected_count'] = Review.objects.filter(status=ReviewStatusType.REJECTED.value).count()
+        
+        return context
+# -------------------------------------------------------------------------------------------
+class AdminReviewUpdateView(LoginRequiredMixin, HasAdminAccesPermission, UpdateView) :
+    template_name = 'dashboard/admin/reviews/review_update.html'
+    model = Review
+    fields = ['status']
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, 'وضعیت نظر با موفقیت به‌روزرسانی شد.')
+        return response
+
+    def form_invalid(self, form):
+        # نمایش خطاهای form از طریق messages
+        for field, errors in form.errors.items():
+            for error in errors:
+                messages.error(self.request, error)
+        return self.render_to_response(self.get_context_data(form=form))
+    
+    def get_success_url(self):
+        return reverse_lazy('dashboard:admin:review-list')
 # -------------------------------------------------------------------------------------------  
 

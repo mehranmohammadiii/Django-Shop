@@ -28,6 +28,7 @@ urlpatterns = [
     path('dashboard/', include('dashboard.urls', namespace='dashboard')),
     path('order/', include('order.urls', namespace='order')),
     path('payment/', include('payment.urls', namespace='payment')),
+    path('review/', include('reviews.urls', namespace='reviews')),
 
 ]
 

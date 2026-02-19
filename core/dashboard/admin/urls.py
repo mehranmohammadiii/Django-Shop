@@ -17,4 +17,7 @@ urlpatterns = [
 
     path('user/list/', views.AdminUserListView.as_view(), name='user-list'),
 
+    path('review/list/', views.AdminReviewListView.as_view(), name='review-list'),
+    path('review/update/<int:pk>/', views.AdminReviewUpdateView.as_view(), name='review-update'),
+
 ]

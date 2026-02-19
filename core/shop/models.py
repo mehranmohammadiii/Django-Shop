@@ -21,6 +21,8 @@ class Product(models.Model):
     category = models.ManyToManyField('Category', related_name='products')
     status = models.PositiveSmallIntegerField(choices=ProductStatus.choices, default=ProductStatus.ACTIVE)
     
+    avg_rating = models.DecimalField(default=0, max_digits=3, decimal_places=2)
+    
     def __str__(self):
         return self.name
     

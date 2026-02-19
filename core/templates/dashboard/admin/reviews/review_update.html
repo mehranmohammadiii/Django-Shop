@@ -1,0 +1,105 @@
+{% extends "dashboard/admin/base.html" %}
+{% load static %}
+
+{% block content2 %}
+
+<div class="col-lg-9">
+  <!-- Card -->
+  <div class="card">
+    <!-- Header -->
+    <div class="card-header">
+      <h5 class="mb-0">بروزرسانی وضعیت نظر</h5>
+    </div>
+    <!-- End Header -->
+
+    <!-- Body -->
+    <div class="card-body">
+      <!-- Review Info -->
+      <div class="card card-bordered bg-light mb-4">
+        <div class="card-body">
+          <!-- User -->
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <small class="text-muted d-block mb-1">کاربر</small>
+              <p class="mb-0">{{ review.user.first_name|default:review.user.email }}</p>
+              <small class="text-muted">{{ review.user.email }}</small>
+            </div>
+            <div class="col-md-6">
+              <small class="text-muted d-block mb-1">تاریخ</small>
+              <p class="mb-0">{{ review.created_at|date:"d b، Y - H:i" }}</p>
+            </div>
+          </div>
+
+          <!-- Product -->
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <small class="text-muted d-block mb-1">محصول</small>
+              <a href="{% url 'shop:product_detail' review.product.slug %}" class="text-dark fw-semibold" target="_blank">
+                {{ review.product.name }}
+              </a>
+            </div>
+            <div class="col-md-6">
+              <small class="text-muted d-block mb-1">امتیاز</small>
+              <div class="d-flex gap-1">
+                {% for i in "12345" %}
+                  {% if i <= review.rating|stringformat:"s" %}
+                    <i class="bi-star-fill text-warning"></i>
+                  {% else %}
+                    <i class="bi-star text-muted"></i>
+                  {% endif %}
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+
+          <!-- Comment -->
+          <div class="row">
+            <div class="col-12">
+              <small class="text-muted d-block mb-2">نظر</small>
+              <p class="mb-0 border-start ps-3 py-2">{{ review.comment }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- End Review Info -->
+
+      <!-- Status Form -->
+      <form method="post" class="mb-4">
+        {% csrf_token %}
+        
+        <div class="mb-3">
+          <label class="form-label">وضعیت نظر</label>
+          <select class="form-select" name="status" required>
+            <option value="">انتخاب کنید...</option>
+            {% for value, label in form.fields.status.choices %}
+              {% if value %}
+                <option value="{{ value }}" {% if review.status == value %}selected{% endif %}>
+                  {{ label }}
+                </option>
+              {% endif %}
+            {% endfor %}
+          </select>
+          {% if form.status.errors %}
+            <div class="invalid-feedback d-block">
+              {{ form.status.errors.0 }}
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="d-flex gap-2">
+          <button type="submit" class="btn btn-primary">
+            <i class="bi-check-circle me-2"></i> ذخیره تغییرات
+          </button>
+          <a href="{% url 'dashboard:admin:review-list' %}" class="btn btn-white">
+            <i class="bi-arrow-left me-2"></i> بازگشت
+          </a>
+        </div>
+      </form>
+      <!-- End Status Form -->
+    </div>
+    <!-- End Body -->
+  </div>
+  <!-- End Card -->
+</div>
+
+{% endblock content2 %}
