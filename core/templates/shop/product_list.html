@@ -184,8 +184,10 @@
               <div class="card card-bordered shadow-none text-center h-100">
                 <div class="card-pinned">
                   {% if product.images.all %}
-                    <img class="card-img-top" src="/media/{{ product.images.first.image }}" alt="{{ product.images.first.alt_text }}" style="height: 250px; object-fit: cover;">
-                  {% elif product.image %}
+                  <a href="{% url 'shop:product_detail' slug=product.slug %}">
+                    <img class="card-img-top"  src="/media/{{ product.images.first.image }}" alt="{{ product.images.first.alt_text }}" style="height: 250px; object-fit: cover;">
+                  </a>
+                    {% elif product.image %}
                     <img class="card-img-top" src="/media/{{ product.image }}" alt="{{ product.name }}" style="height: 250px; object-fit: cover;">
                   {% else %}
                     <img class="card-img-top" src="{% static 'img/300x180/img1.jpg' %}" alt="Image Description" style="height: 250px; object-fit: cover;">
@@ -203,7 +205,7 @@
                 <div class="card-body">
                   <div class="mb-2">
                     {% for category in product.category.all %}
-                      <a class="link-sm link-secondary" href="#">{{ category.name }}</a>{% if not forloop.last %}<span>, </span>{% endif %}
+                      <a class="link-sm link-secondary">{{ category.name }}</a>{% if not forloop.last %}<span>, </span>{% endif %}
                     {% endfor %}
                   </div>
 
@@ -260,14 +262,14 @@
               <!-- Previous Page -->
               {% if page_obj.has_previous %}
                 <li class="page-item">
-                  <a class="page-link" href="?page=1" aria-label="First">
+                  <a class="page-link" href="{{ base_url }}{% if query_string %}?{{ query_string }}&page=1{% else %}?page=1{% endif %}" aria-label="First">
                     <span aria-hidden="true">
                       <i class="bi-chevron-double-left small"></i>
                     </span>
                   </a>
                 </li>
                 <li class="page-item">
-                  <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                  <a class="page-link" href="{{ base_url }}{% if query_string %}?{{ query_string }}&page={{ page_obj.previous_page_number }}{% else %}?page={{ page_obj.previous_page_number }}{% endif %}" aria-label="Previous">
                     <span aria-hidden="true">
                       <i class="bi-chevron-left small"></i>
                     </span>
@@ -291,11 +293,11 @@
                   </li>
                 {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
                   <li class="page-item">
-                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                    <a class="page-link" href="{{ base_url }}{% if query_string %}?{{ query_string }}&page={{ num }}{% else %}?page={{ num }}{% endif %}">{{ num }}</a>
                   </li>
                 {% elif num == 1 or num == page_obj.paginator.num_pages %}
                   <li class="page-item">
-                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                    <a class="page-link" href="{{ base_url }}{% if query_string %}?{{ query_string }}&page={{ num }}{% else %}?page={{ num }}{% endif %}">{{ num }}</a>
                   </li>
                 {% elif num == page_obj.number|add:'-4' or num == page_obj.number|add:'4' %}
                   <li class="page-item disabled">
@@ -307,14 +309,14 @@
               <!-- Next Page -->
               {% if page_obj.has_next %}
                 <li class="page-item">
-                  <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+                  <a class="page-link" href="{{ base_url }}{% if query_string %}?{{ query_string }}&page={{ page_obj.next_page_number }}{% else %}?page={{ page_obj.next_page_number }}{% endif %}" aria-label="Next">
                     <span aria-hidden="true">
                       <i class="bi-chevron-right small"></i>
                     </span>
                   </a>
                 </li>
                 <li class="page-item">
-                  <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}" aria-label="Last">
+                  <a class="page-link" href="{{ base_url }}{% if query_string %}?{{ query_string }}&page={{ page_obj.paginator.num_pages }}{% else %}?page={{ page_obj.paginator.num_pages }}{% endif %}" aria-label="Last">
                     <span aria-hidden="true">
                       <i class="bi-chevron-double-right small"></i>
                     </span>
@@ -452,9 +454,37 @@ function add_wishlist_item(button, productId) {
     if (data.status === 'added') {
       button.classList.add('btn-danger');
       button.classList.remove('btn-outline-secondary');
+      Toastify({
+        text: "✅ به لیست علایق اضافه شد.",
+        duration: 3000,
+        gravity: "top",
+        position: "right",
+        backgroundColor: "#10b981",
+        className: "toastify-message",
+        style: {
+          fontSize: "14px",
+          fontFamily: "Arial, sans-serif",
+          borderRadius: "8px",
+          boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+        }
+      }).showToast();
     } else if (data.status === 'removed') {
       button.classList.remove('btn-danger');
       button.classList.add('btn-outline-secondary');
+      Toastify({
+        text: "✅ از لیست علایق حذف شد.",
+        duration: 3000,
+        gravity: "top",
+        position: "right",
+        backgroundColor: "#10b981",
+        className: "toastify-message",
+        style: {
+          fontSize: "14px",
+          fontFamily: "Arial, sans-serif",
+          borderRadius: "8px",
+          boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+        }
+      }).showToast();
     }
   })
   .catch(error => {

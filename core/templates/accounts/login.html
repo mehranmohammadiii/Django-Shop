@@ -16,6 +16,17 @@
         <form action="{% url 'accounts:login' %}" method="post">
           <!-- Form -->
            {% csrf_token %}
+          
+          <!-- Non-field errors -->
+          {% comment %} {% if form.non_field_errors %}
+            <div class="alert alert-danger" role="alert">
+              {% for error in form.non_field_errors %}
+                {{ error }}<br>
+              {% endfor %}
+            </div>
+          {% endif %} {% endcomment %}
+          <!-- End Non-field errors -->
+          
           <div class="mb-4">
             <label class="form-label" for="signupSimpleLoginEmail">ایمیل شما</label>
             <input type="email" class="form-control form-control-lg text-center" name="username"

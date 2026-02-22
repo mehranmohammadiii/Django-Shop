@@ -25,7 +25,7 @@
                   {% endif %}
 
                   <div class="card-pinned-top-end">
-                    <button type="button" class="btn btn-outline-secondary btn-xs btn-icon rounded-circle" data-bs-toggle="tooltip" data-bs-placement="top" title="افزودن به علایق">
+                    <button type="button" onclick="add_wishlist_item(this, {{ product.id }})" class="btn btn-outline-secondary btn-xs btn-icon rounded-circle" data-bs-toggle="tooltip" data-bs-placement="top" title="افزودن به علایق">
                       <i class="bi-heart"></i>
                     </button>
                   </div>
@@ -74,8 +74,9 @@
                   </a>
                   <!-- End Rating -->
 
+                  {% comment %} <button onclick="add_wishlist_item(this, {{product.id}})" type="button" class=" {% if product.id in wishlist %}btn btn-danger{% else %}btn btn-outline-secondary{% endif %} btn-xs btn-icon rounded-circle" data-bs-toggle="tooltip" data-bs-placement="top" title="افزودن به علایق"> {% endcomment %}
                   <button onclick="add_cart_item('{{product.id}}', 1)" type="button" class="btn btn-outline-primary btn-sm btn-transition rounded-pill">افزودن به سبد خرید</button>
-                  
+
                 </div>
               </div>
               <!-- End Card -->
@@ -95,3 +96,61 @@
     </div> 
     <!-- End Card Grid --> {% endcomment %}
 {% load static %}
+
+<script>
+
+  function add_wishlist_item(button, productId) {
+    const url = "{% url 'shop:add_or_remove_wishlist' product_id=0 %}".replace('0', productId);
+    
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': '{{ csrf_token }}'
+      },
+      body: JSON.stringify({ product_id: productId })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.status === 'added') {
+        button.classList.add('btn-danger');
+        button.classList.remove('btn-outline-secondary');
+        Toastify({
+          text: "✅ به لیست علایق اضافه شد.",
+          duration: 3000,
+          gravity: "top",
+          position: "right",
+          backgroundColor: "#10b981",
+          className: "toastify-message",
+          style: {
+            fontSize: "14px",
+            fontFamily: "Arial, sans-serif",
+            borderRadius: "8px",
+            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+          }
+        }).showToast();
+      } else if (data.status === 'removed') {
+        button.classList.remove('btn-danger');
+        button.classList.add('btn-outline-secondary');
+        Toastify({
+          text: "✅ از لیست علایق حذف شد.",
+          duration: 3000,
+          gravity: "top",
+          position: "right",
+          backgroundColor: "#10b981",
+          className: "toastify-message",
+          style: {
+            fontSize: "14px",
+            fontFamily: "Arial, sans-serif",
+            borderRadius: "8px",
+            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+          }
+        }).showToast();
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
+  }
+  
+  </script>

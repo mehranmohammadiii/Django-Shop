@@ -37,7 +37,6 @@ class UserManager(BaseUserManager) :
         """
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
-        extra_fields.setdefault("is_active", True)
         extra_fields.setdefault("type", UserType.SUPER_ADMIN.value)
         return self.create_user(email, password, **extra_fields)
     
@@ -53,11 +52,10 @@ class User(AbstractBaseUser, PermissionsMixin) :
     updated_date = models.DateTimeField(auto_now=True)
     type = models.PositiveSmallIntegerField(choices=UserType.choices, default=UserType.CUSTOMER.value)
 
-
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
     objects = UserManager()
-
+    # ---------------------
     def __str__(self):
         return self.email
 # --------------------------------------------------------------------------------------------
@@ -70,10 +68,10 @@ class Profile(models.Model) :
     created_date = models.DateTimeField(auto_now_add=True) 
     updated_date = models.DateTimeField(auto_now=True)
     descriptions = models.TextField()
-
+    # ---------------------
     def full_name(self):
         return f"{self.first_name} {self.last_name}"
-
+    # ---------------------
     def __str__(self):
         return self.user.email
 # --------------------------------------------------------------------------------------------

@@ -1,7 +1,6 @@
 from django.db import models
 from django.conf import settings
-
-
+# ---------------------------------------------------------------------------------------------------
 class ProductStatus(models.IntegerChoices):
     ACTIVE = 1, 'Active'
     INACTIVE = 2, 'Inactive'
@@ -9,6 +8,7 @@ class ProductStatus(models.IntegerChoices):
 # ---------------------------------------------------------------------------------------------------
 class Product(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
+    category = models.ManyToManyField('Category', related_name='products')
     name = models.CharField(max_length=255)
     description = models.TextField()
     price = models.DecimalField(default=0, max_digits=10, decimal_places=2)
@@ -18,14 +18,15 @@ class Product(models.Model):
     slug = models.SlugField(allow_unicode=True, unique=True)
     image = models.ImageField(default='/default/product-img.pg', upload_to='product/img', blank=True, null=True)
     discount_price = models.DecimalField(default=0, max_digits=10, decimal_places=2)
-    category = models.ManyToManyField('Category', related_name='products')
     status = models.PositiveSmallIntegerField(choices=ProductStatus.choices, default=ProductStatus.ACTIVE)
     
     avg_rating = models.DecimalField(default=0, max_digits=3, decimal_places=2)
     
+    # ----------------------------------
     def __str__(self):
         return self.name
     
+    # ----------------------------------
     class Meta:
         ordering = ['-created_at']
 # ---------------------------------------------------------------------------------------------------
@@ -34,6 +35,7 @@ class Category(models.Model):
     description = models.TextField(blank=True, null=True)
     slug = models.SlugField(allow_unicode=True, unique=True)
     
+    # ----------------------------------
     def __str__(self):
         return self.name
 # ---------------------------------------------------------------------------------------------------
@@ -44,6 +46,7 @@ class ProductImage(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
+    # ----------------------------------
     def __str__(self):
         return f"Image for {self.product.name}"
 # ---------------------------------------------------------------------------------------------------
@@ -52,6 +55,7 @@ class wishlist(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='wishlisted_by')
     created_at = models.DateTimeField(auto_now_add=True)
     
+    # ----------------------------------
     class Meta:
         unique_together = ('user', 'product')
         ordering = ['-created_at']

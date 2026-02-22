@@ -142,7 +142,7 @@
           <!-- End Price -->
 
           <!-- Quantity -->
-          <div class="quantity-counter mb-3">
+          {% comment %} <div class="quantity-counter mb-3">
             <div class="js-quantity-counter row align-items-center">
               <div class="col">
                 <span class="d-block small">تعداد را انتخاب کنید</span>
@@ -165,11 +165,11 @@
               <!-- End Col -->
             </div>
             <!-- End Row -->
-          </div>
+          </div> {% endcomment %}
           <!-- End Quantity -->
 
           <!-- Accordion -->
-          <div class="accordion mb-5" id="shopCartAccordion">
+          {% comment %} <div class="accordion mb-5" id="shopCartAccordion">
             <!-- Collapse -->
             <div class="accordion-item">
               <a class="accordion-button collapsed" href="#" role="button" data-bs-toggle="collapse" data-bs-target="#shopCartAccordionCollapseOne" aria-expanded="false" aria-controls="shopCartAccordionCollapseOne">
@@ -223,15 +223,16 @@
               </div>
             </div>
             <!-- End Collapse -->
-          </div>
+          </div> {% endcomment %}
           <!-- End Accordion -->
 
           <div class="d-grid mb-4">
-            <button onclick="add_cart_item('{{product.id}}', 1)" type="button" class="btn btn-primary btntransition" >افزودن به سبد خرید</button>
+          <button onclick="add_cart_item('{{product.id}}', 1)" type="button" class="btn btn-outline-primary btn-sm btn-transition rounded-pill">افزودن به سبد خرید</button>
+
           </div>
 
           <!-- Media -->
-          <div class="d-flex align-items-center">
+          {% comment %} <div class="d-flex align-items-center">
             <div class="flex-shrink-0">
               <div class="svg-icon svg-icon-sm text-primary">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -245,7 +246,7 @@
               <span class="small me-1">نیاز به پشتیبانی دارید؟</span>
               <a class="link small" href="#">ارسال تیکت</a>
             </div>
-          </div>
+          </div> {% endcomment %}
           <!-- End Media -->
         </div>
         <!-- End Col -->
@@ -255,7 +256,7 @@
     <!-- End Hero -->
 
     <!-- Content -->
-    <div class="container content-space-t-2 content-space-md-3">
+    {% comment %} <div class="container content-space-t-2 content-space-md-3">
       <div class="row">
         <div class="col-md-6 mb-5 mb-md-0">
           <div class="pe-lg-4">
@@ -294,11 +295,11 @@
         <!-- End Col -->
       </div>
       <!-- End Row -->
-    </div>
+    </div> {% endcomment %}
     <!-- End Content -->
 
     <!-- Content -->
-    <div class="container">
+    {% comment %} <div class="container">
       <div class="row justify-content-lg-between align-items-md-center">
         <div class="col-md-6 col-lg-5 content-space-1 content-space-md-2">
           <h2 class="mb-4">کلاه گاه به گاه با سبک اصلی جلو</h2>
@@ -322,7 +323,7 @@
           <div class="bg-img-center h-100 rounded-2" style="background-image: url('{% static 'img/750x750/img4.jpg' %}'); min-height: 30rem;"></div>
         </div>
       </div>
-    </div>
+    </div> {% endcomment %}
     <!-- End Content -->
 
     <!-- Card Grid -->
@@ -671,11 +672,11 @@
             <div class="border-bottom pb-4 mb-4">
               <div class="row align-items-center">
                 <div class="col-sm mb-2 mb-sm-0">
-                  <h4 class="mb-0">مرتب سازی کنید</h4>
+                  {% comment %} <h4 class="mb-0">مرتب سازی کنید</h4> {% endcomment %}
                 </div>
                 <!-- End Col -->
 
-                <div class="col-sm-auto">
+                {% comment %} <div class="col-sm-auto">
                   <!-- Select -->
                   <select class="form-select form-select-sm">
                     <option value="mostRecent" selected>اخیرا</option>
@@ -684,7 +685,7 @@
                     <option value="newest">جدیدترین</option>
                   </select>
                   <!-- End Select -->
-                </div>
+                </div> {% endcomment %}
 
                 <div class="col-sm-auto">
                     <button type="button" class="btn btn-primary btn-transition rounded-pill" data-bs-toggle="modal" data-bs-target="#reviewModal">ثبت دیدگاه</button>

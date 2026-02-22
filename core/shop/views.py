@@ -12,7 +12,9 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
 from django.http import JsonResponse
 import json
+# ------------------------------------------------------------------------------------------------------------------------
 class ShopProductListView(ListView):
+
     """
     Display active products list with pagination support and filtering.
 
@@ -24,11 +26,14 @@ class ShopProductListView(ListView):
     context_object_name = "products"
     paginate_by = 9
 
+    # ---------------------------------
     def get_paginate_by(self, queryset):
+
         """
         Get the number of items per page from request parameters.
         Default is 9, can be 5, 9, 12, 15, or 20.
         """
+
         paginate_by = self.request.GET.get('paginate_by')
         if paginate_by:
             try:
@@ -39,6 +44,7 @@ class ShopProductListView(ListView):
                 pass
         return self.paginate_by
 
+    # ---------------------------------
     def get_queryset(self):
         queryset = Product.objects.filter(status=ProductStatus.ACTIVE).prefetch_related('images', 'category')
         
@@ -79,16 +85,21 @@ class ShopProductListView(ListView):
             queryset = queryset.order_by('-id')  # Default: newest first
         
         return queryset
-
+        
+    # ---------------------------------
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if self.request.user.is_authenticated:
             context['wishlist'] = wishlist.objects.filter(user=self.request.user).values_list('product_id', flat=True)
         context['categories'] = Category.objects.all()
+        
+        context['base_url'] = self.request.path
+        context['query_string'] = self.request.GET.urlencode()
 
         return context
-# ----------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------------------------------
 class ShopProductDetailView(DetailView):
+    
     """
     Display detailed view of a single product.
 
@@ -98,10 +109,11 @@ class ShopProductDetailView(DetailView):
 
     template_name = "shop/product_detail.html"
     context_object_name = "product"
-    queryset = Product.objects.prefetch_related('images', 'category')
+    queryset = Product.objects.filter(status=ProductStatus.ACTIVE).prefetch_related('images', 'category')
     slug_field = 'slug'
     slug_url_kwarg = 'slug'
 
+    # ---------------------------------
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         product = self.get_object()
@@ -126,6 +138,7 @@ class ShopProductDetailView(DetailView):
         return context
 # ----------------------------------------------------------------------
 class AddOrRemoveWishlistView(LoginRequiredMixin, View):
+
     def post(self, request, product_id):
         try:
             data = json.loads(request.body)
@@ -144,4 +157,4 @@ class AddOrRemoveWishlistView(LoginRequiredMixin, View):
         else:
             wishlist_item.delete()
             return JsonResponse({'status': 'removed'})
-# ----------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------------------------------

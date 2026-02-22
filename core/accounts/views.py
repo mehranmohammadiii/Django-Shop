@@ -4,10 +4,10 @@ from django.contrib.auth import views
 from django.contrib import messages
 from django.urls import reverse_lazy
 from .forms import AuthenticationForm
-
+# -----------------------------------------------------------------------------------------------------
 class HomePageView(TemplateView):
     template_name = "accounts/home.html"
-
+# -----------------------------------------------------------------------------------------------------
 class LoginView(views.LoginView):
     """
     The LoginView class is used to manage user logins.
@@ -23,7 +23,8 @@ class LoginView(views.LoginView):
     form_class = AuthenticationForm
     redirect_authenticated_user = True
     # success_url = reverse_lazy('accounts:account')
-    
+
+   # --------------------- 
     def form_valid(self, form):
         messages.success(self.request, 'خوش‌آمدید! با موفقیت وارد شدید.')
         return super().form_valid(form)
@@ -37,6 +38,13 @@ class LogoutView(views.LogoutView):
     """
     # next_page = reverse_lazy('accounts:account')  
     next_page = '/'  # Redirect to home page after logout
+    # ---------------------
     def dispatch(self, request, *args, **kwargs):
+
+        ''''
+        This method is used to dispatch the logout view.
+        It displays a success message and redirects to the home page after logout.
+        '''
         messages.success(request, 'با موفقیت از سیستم خارج شدید.')
         return super().dispatch(request, *args, **kwargs)
+# -----------------------------------------------------------------------------------------------------

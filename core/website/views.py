@@ -7,10 +7,16 @@ class HomePageView(TemplateView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # دریافت 8 محصول فعال برای نمایش در صفحه اصلی
+        
+        # Get 8 active products to display on the home page
         context['products'] = Product.objects.filter(
             status=ProductStatus.ACTIVE
         ).prefetch_related('images', 'category')[:8]
+
+        # Get 3 products for the main slider (Hero Slider)
+        context['hero_slider_products'] = Product.objects.filter(
+            status=ProductStatus.ACTIVE
+        ).prefetch_related('images', 'category')[:3]
         return context
 
 class AboutPageView(TemplateView):

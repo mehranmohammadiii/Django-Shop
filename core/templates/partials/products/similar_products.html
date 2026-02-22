@@ -8,7 +8,9 @@
               <div class="card card-bordered shadow-none text-center h-100">
                 <div class="card-pinned">
                   {% if product.images.all %}
+                  <a href="{% url 'shop:product_detail' slug=product.slug %}">
                     <img class="card-img-top" src="/media/{{ product.images.first.image }}" alt="{{ product.images.first.alt_text }}" style="height: 250px; object-fit: cover;">
+                  </a>
                   {% elif product.image %}
                     <img class="card-img-top" src="/media/{{ product.image }}" alt="{{ product.name }}" style="height: 250px; object-fit: cover;">
                   {% else %}
