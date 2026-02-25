@@ -3,8 +3,9 @@ from django.views.generic import View, TemplateView
 from django.http import JsonResponse
 from .cart import CartSession
 from shop.models import Product
-
+# ------------------------------------------------------------------------------------------------------------------------
 class SessionCartAddProduct(View):
+
     """
     View for adding a product to a shopping cart by session
 
@@ -13,6 +14,8 @@ class SessionCartAddProduct(View):
     - Adds the product to the session shopping cart
     - Returns the shopping cart information as JSON
     """
+
+    # ---------------------------------
     def post(self, request, *args, **kwargs):
         product_id = request.POST.get('product_id')
         quantity = int(request.POST.get('quantity', 1))
@@ -32,9 +35,10 @@ class SessionCartAddProduct(View):
             'cart_items': cart.get_cart_items(),
             'total_items': cart.get_total_items()
         })
+# -------------------------------------------------------------------------------------------------------------------------
 
-# -----------------------------------------------
 class SessionCartRemoveProduct(View):
+
     """
     View for removing a product from a shopping cart by session
 
@@ -43,6 +47,8 @@ class SessionCartRemoveProduct(View):
     - Removes the product from the session shopping cart
     - Returns the updated shopping cart information as JSON
     """
+
+    # ---------------------------------
     def post(self, request, *args, **kwargs):
         product_id = request.POST.get('product_id')
         
@@ -54,15 +60,17 @@ class SessionCartRemoveProduct(View):
 
         if request.user.is_authenticated:
             cart.merge_cart_items_to_db(request.user)
+            
         return JsonResponse({
             'status': 'success',
             'message': 'Product removed from cart',
             'cart_items': cart.get_cart_items(),
             'total_items': cart.get_total_items()
         })
+# -----------------------------------------------------------------------------------------------------------------------
 
-# -----------------------------------------------
 class SessionCartUpdateProduct(View):
+
     """
     View for updating the quantity of a product in the shopping cart by session
 
@@ -71,6 +79,8 @@ class SessionCartUpdateProduct(View):
     - Updates the product quantity in the session shopping cart
     - Returns the updated shopping cart information as JSON
     """
+
+    # ---------------------------------
     def post(self, request, *args, **kwargs):
         product_id = request.POST.get('product_id')
         quantity = int(request.POST.get('quantity', 1))
@@ -90,23 +100,28 @@ class SessionCartUpdateProduct(View):
             'cart_items': cart.get_cart_items(),
             'total_items': cart.get_total_items()
         })
-
-# -----------------------------------------------
+# -------------------------------------------------------------------------------------------------------------------------
 class SessionCart(TemplateView):
+
     """
     View for displaying the shopping cart stored in the session.
 
     This class renders a template showing the contents of the shopping cart
     with product details fetched from the database.
+
+    The reason for using session is to have a shopping cart for users who are not logged in.
     """
+
+    # ---------------------------------
     template_name = 'cart/session_cart.html'
     
+    # ---------------------------------
     def get_context_data(self, **kwargs):
+
         context = super().get_context_data(**kwargs)
         cart = CartSession(self.request.session)
         cart_items = cart.get_cart_items()
         
-        # دریافت اطلاعات محصولات از دیتابیس
         products_dict = {}
         product_ids = [item['product_id'] for item in cart_items]
         
@@ -114,7 +129,6 @@ class SessionCart(TemplateView):
             products = Product.objects.filter(id__in=product_ids)
             products_dict = {str(p.id): p for p in products}       # {'25','30','49'}
         
-        # ترکیب اطلاعات سبد خرید با داده‌های محصول
         cart_with_products = []
         total_price = 0
         

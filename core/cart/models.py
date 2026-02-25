@@ -1,25 +1,38 @@
 from django.db import models
-
+# ----------------------------------------------------------------------------------------------
 class Cart(models.Model):
     user = models.ForeignKey('accounts.User', on_delete=models.CASCADE, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    # --------------------------------
     def calculate_total_price(self):
         total = sum(item.product.price * item.quantity for item in self.items.all())
         return total
 
+    # --------------------------------
     def __str__(self):
         return f"Cart {self.user}"
-
+# -----------------------------------------------------------------------------------------------------------
 class CartItem(models.Model):
     cart = models.ForeignKey(Cart, related_name='items', on_delete=models.CASCADE)
     product = models.ForeignKey('shop.Product', on_delete=models.PROTECT)
     quantity = models.PositiveIntegerField(default=1)
-
     # A product can only be available in the cart once.
+
+    # --------------------------------
     class Meta:
+
+        '''
+        This line specifies that each product can only be in a Cart once;
+        that is, the combination of the cart and product fields
+        in the CartItem table must be unique and duplicates are not allowed.
+        This prevents multiple CartItems with the same product from being registered for a single cart.
+        '''
+        
         unique_together = ('cart', 'product')
 
+    # --------------------------------
     def __str__(self):
         return f"{self.quantity} of {self.product.name}"
+# -----------------------------------------------------------------------------------------------------------------
