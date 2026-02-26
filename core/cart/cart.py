@@ -116,7 +116,7 @@ class CartSession:
         for cart_item in cart_items:
             for item in self.cart['items']:
                 if str(cart_item.product.id) == item['product_id']:
-                    cart_item.quantity = item['quantity']
+                    item['quantity'] = cart_item.quantity
                     cart_item.save()
                     break
             else:

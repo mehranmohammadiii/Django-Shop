@@ -74,8 +74,17 @@
                               </a>
 
                               <a class="link-sm link-secondary small" href="javascript:;">
-                                <i class="bi-heart-fill ms-1 "></i>جزو علایق
-                              </a>
+                                <button 
+                                  onclick="add_wishlist_item(this, {{item.product_id}})" 
+                                  type="button" 
+                                  class="{% if product_id in wishlist %}btn btn-danger{% else %}btn btn-outline-secondary{% endif %} btn-xs btn-icon rounded-circle"
+                                  style="background: linear-gradient(90deg, #fffae5 0%, #ffe9e9 100%); border: 1.5px solid #fea6a6; color: #b03a2e; box-shadow: 0 1px 4px rgba(255, 172, 162, 0.15);" 
+                                  data-bs-toggle="tooltip" 
+                                  data-bs-placement="top" 
+                                  title="افزودن به علایق">
+                                  <i class="bi-heart" style="color:#db3434;"></i>
+                                </button>
+                                </a>
                             </div>
                           </div>
                           <!-- End Col -->
@@ -107,7 +116,7 @@
 
             <div class="d-sm-flex justify-content-end">
               <a class="link" href="/products-grid.html">
-                به خرید ادامه دهید <i class="bi-chevron-left small ms-1"></i>
+                {% comment %} به خرید ادامه دهید <i class="bi-chevron-left small ms-1"></i> {% endcomment %}
               </a>
             </div>
           </form>
@@ -163,8 +172,8 @@
                 </div>
               </div>
               <div class="flex-grow-1 ms-2">
-                <span class="small me-1">نیاز به پشتیبانی دارید؟</span>
-                <a class="link small" href="#">ارسال تیکت</a>
+                {% comment %} <span class="small me-1">نیاز به پشتیبانی دارید؟</span> {% endcomment %}
+                {% comment %} <a class="link small" href="#">ارسال تیکت</a> {% endcomment %}
               </div>
             </div>
             <!-- End Media -->
@@ -300,6 +309,65 @@ function getCookie(name) {
     }
     return cookieValue;
 }
+
+function add_wishlist_item(button, productId) {
+  const url = "{% url 'shop:add_or_remove_wishlist' product_id=0 %}".replace('0', productId);
+  
+  fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': '{{ csrf_token }}'
+    },
+    body: JSON.stringify({ product_id: productId })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.status === 'added') {
+      button.classList.add('btn-danger');
+      button.classList.remove('btn-outline-secondary');
+      Toastify({
+        text: "✅ به لیست علایق اضافه شد.",
+        duration: 3000,
+        gravity: "top",
+        position: "right",
+        backgroundColor: "#10b981",
+        className: "toastify-message",
+        style: {
+          fontSize: "14px",
+          fontFamily: "Arial, sans-serif",
+          borderRadius: "8px",
+          boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+        }
+      }).showToast();
+    } else if (data.status === 'removed') {
+      button.classList.remove('btn-danger');
+      button.classList.add('btn-outline-secondary');
+      Toastify({
+        text: "✅ از لیست علایق حذف شد.",
+        duration: 3000,
+        gravity: "top",
+        position: "right",
+        backgroundColor: "#10b981",
+        className: "toastify-message",
+        style: {
+          fontSize: "14px",
+          fontFamily: "Arial, sans-serif",
+          borderRadius: "8px",
+          boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+        }
+      }).showToast();
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+  });
+}
+
+</script>
+
+
+
 </script>
 
 {% endblock content %}

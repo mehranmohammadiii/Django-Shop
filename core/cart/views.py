@@ -3,6 +3,7 @@ from django.views.generic import View, TemplateView
 from django.http import JsonResponse
 from .cart import CartSession
 from shop.models import Product
+from shop.models import wishlist
 # ------------------------------------------------------------------------------------------------------------------------
 class SessionCartAddProduct(View):
 
@@ -119,6 +120,10 @@ class SessionCart(TemplateView):
     def get_context_data(self, **kwargs):
 
         context = super().get_context_data(**kwargs)
+
+        if self.request.user.is_authenticated:
+            context['wishlist'] = wishlist.objects.filter(user=self.request.user).values_list('product_id', flat=True)
+
         cart = CartSession(self.request.session)
         cart_items = cart.get_cart_items()
         
