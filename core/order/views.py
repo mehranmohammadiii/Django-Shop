@@ -21,14 +21,17 @@ from payment.zarinpal_client import ZarinPalSandbox
 from payment.models import Payment
 # -----------------------------------------------------------------------------------------------------------------------
 class CheckoutView(LoginRequiredMixin, HasCustomerAccesPermission, FormView):
+
     template_name = 'order/checkout.html'
     form_class = CheckOutForm
     success_url = reverse_lazy('order:checkout-complete')
+
     # -------------------------------------
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['request'] = self.request
         return kwargs
+    
     # -------------------------------------
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -63,6 +66,7 @@ class CheckoutView(LoginRequiredMixin, HasCustomerAccesPermission, FormView):
         context['final_total'] = final_total
 
         return context
+    
     # -------------------------------------       
     def form_valid(self, form):
         # دریافت coupon اگر موجود باشد
@@ -85,8 +89,8 @@ class CheckoutView(LoginRequiredMixin, HasCustomerAccesPermission, FormView):
                 price=item.product.price,
             )
             
-        cart.items.all().delete()
-        CartSession(self.request.session).clear()
+        # cart.items.all().delete()
+        # CartSession(self.request.session).clear()
 
         total_price = order.calculate_total_price()
         if coupon:
@@ -106,6 +110,7 @@ class CheckoutView(LoginRequiredMixin, HasCustomerAccesPermission, FormView):
         
         messages.success(self.request, "سفارش شما با موفقیت ثبت شد.")
         return super().form_valid(form)
+    
     # -------------------------------------
     def create_payment(self,order):
 
@@ -128,6 +133,13 @@ class CheckoutView(LoginRequiredMixin, HasCustomerAccesPermission, FormView):
             )   
             order.peyment = payment_obj
             order.save()
+            
+            # # ✅ سبد خرید را حذف کن فقط اگر پرداخت موفق بود
+            # cart = Cart.objects.filter(user=self.request.user).first()
+            # if cart:
+            #     cart.items.all().delete()
+            #     CartSession(self.request.session).clear()
+            
             return redirect(payment_page_url)
         else:
             messages.error(self.request, "خطا در درخواست پرداخت. لطفاً دوباره تلاش کنید.")

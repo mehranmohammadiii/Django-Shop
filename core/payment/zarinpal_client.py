@@ -1,7 +1,7 @@
 import requests
 import json
 from django.conf import settings
-
+# -----------------------------------------------------------------------------------------------------------------
 class ZarinPalSandbox:
 
     def __init__(self):
@@ -55,25 +55,25 @@ class ZarinPalSandbox:
     # --------------------------------------
     def get_payment_page_url(self, authority_code):
         return self.payment_page_url.format(authority_code=authority_code)
-# ----------------------------------------------------------------------------------------------------------------
-if __name__ == "__main__":
-    # callback_url = "https://maktabkhooneh.org/"
-    zarinpal = ZarinPalSandbox()
+# ----------------------------------------------------------------------------------------------------------------------------------
+# if __name__ == "__main__":
+#     # callback_url = "https://maktabkhooneh.org/"
+#     zarinpal = ZarinPalSandbox()
 
-    # Example usage:
-    amount = 10000  # Amount in IRR
-    description = "Test Payment"
-    payment_request_response = zarinpal.payment_request(amount, description)
-    print(payment_request_response)
+#     # Example usage:
+#     amount = 10000  # Amount in IRR
+#     description = "Test Payment"
+#     payment_request_response = zarinpal.payment_request(amount, description)
+#     print(payment_request_response)
 
-    authority_code = payment_request_response['data'].get('authority')
-    if authority_code:
-        payment_page_url = zarinpal.get_payment_page_url(authority_code)
-        print(f"Redirect user to: {payment_page_url}")
+#     authority_code = payment_request_response['data'].get('authority')
+#     if authority_code:
+#         payment_page_url = zarinpal.get_payment_page_url(authority_code)
+#         print(f"Redirect user to: {payment_page_url}")
 
-        # After user completes payment, verify it
-        input("check validateion and press Enter to continue...")
-        verification_response = zarinpal.payment_verify(authority_code, amount)
-        print(verification_response)
-    print("Done")
+#         # After user completes payment, verify it
+#         input("check validateion and press Enter to continue...")
+#         verification_response = zarinpal.payment_verify(authority_code, amount)
+#         print(verification_response)
+#     print("Done")
 # ----------------------------------------------------------------------------------------------------------------

@@ -5,6 +5,7 @@ from accounts.models import Profile
 from order.models import UserAddress
 
 class CustomerPasswordChangeForm(auth_forms.PasswordChangeForm):
+
     """
     A form that lets a user change their password by entering their old
     password with Persian error messages.
@@ -38,9 +39,11 @@ class CustomerPasswordChangeForm(auth_forms.PasswordChangeForm):
     )
     # -----------------------------------------
     def clean_old_password(self):
+
         """
         Validate that the old_password field is correct.
         """
+
         old_password = self.cleaned_data.get('old_password')
         if not self.user.check_password(old_password):
             raise ValidationError(
@@ -50,6 +53,7 @@ class CustomerPasswordChangeForm(auth_forms.PasswordChangeForm):
         return old_password
     # -----------------------------------------
     def clean_new_password2(self):
+
         """
         Validate that the two new password entries match and are not the old password.
         """
@@ -87,3 +91,4 @@ class CustomerAddressForm(forms.ModelForm):
             'city': forms.TextInput(attrs={'class': 'form-control'}),
 
         }
+# -------------------------------------------------------------------------------------------------------------------

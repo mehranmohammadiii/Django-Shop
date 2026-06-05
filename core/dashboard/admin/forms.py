@@ -81,9 +81,12 @@ class AdminProfileEditForm(forms.ModelForm):
 # -------------------------------------------------------------------------------------------------------------------
 
 class AdminProductEditForm(forms.ModelForm):
+
     """
     فرم ویرایش محصولات برای مدیران
     """
+
+    # -----------------------------------    
     class Meta:
         model = Product
         fields = ['name', 'description', 'price', 'discount_price', 'stock', 'category', 'status', 'image']
@@ -130,3 +133,4 @@ class AdminProductEditForm(forms.ModelForm):
             'status': 'وضعیت',
             'image': 'تصویر محصول',
         }
+# ------------------------------------------------------------------------------------------------------------------------------    

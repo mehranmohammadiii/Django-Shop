@@ -16,6 +16,7 @@ from accounts.models import User
 from reviews.models import Review, ReviewStatusType
 # -------------------------------------------------------------------------------------------  
 class AdminDashboardHomeView(LoginRequiredMixin,HasAdminAccesPermission, TemplateView):
+
     template_name = 'dashboard/admin/home.html'
     
     # def dispatch(self, request, *args, **kwargs):
@@ -25,12 +26,13 @@ class AdminDashboardHomeView(LoginRequiredMixin,HasAdminAccesPermission, Templat
     #     return super().dispatch(request, *args, **kwargs)
 
 # -----------------------------------------------------------------------------------------
-
 class AdminSecurityEditView(LoginRequiredMixin, HasAdminAccesPermission, auth_view.PasswordChangeView):   
+
     template_name = 'dashboard/admin/security_edit.html'
     success_url = reverse_lazy('dashboard:admin:security-edit')
     form_class = AdminPasswordChangeForm
     
+    # -----------------------------------    
     def form_valid(self, form):
         response = super().form_valid(form)
         messages.success(self.request, 'رمز عبور شما با موفقیت تغییر یافت.')
@@ -44,36 +46,43 @@ class AdminSecurityEditView(LoginRequiredMixin, HasAdminAccesPermission, auth_vi
         return self.render_to_response(self.get_context_data(form=form))
 # -----------------------------------------------------------------------------------------
 class AdminProfileEditView(LoginRequiredMixin, HasAdminAccesPermission, UpdateView):
+
     template_name = 'dashboard/admin/profile_edit.html'
     success_url = reverse_lazy('dashboard:admin:profile-edit')
     form_class = AdminProfileEditForm
 
+    # -----------------------------------    
     def form_valid(self, form):
         response = super().form_valid(form)
         messages.success(self.request, 'پروفایل شما با موفقیت به‌روزرسانی شد.')
         return response
     
+    # -----------------------------------    
     def get_object(self, queryset=None):
         # اگر Profile وجود نداشت، یک جدید ایجاد کن
         profile, created = Profile.objects.get_or_create(user=self.request.user)
         return profile
 # -------------------------------------------------------------------------------------------  
 class AdminProfileImageEditView(LoginRequiredMixin, HasAdminAccesPermission, UpdateView):
+
     http_method_names = ["post"]
     success_url = reverse_lazy('dashboard:admin:profile-edit')
     model = Profile
     fields = ['image']
 
+    # -----------------------------------    
     def form_valid(self, form):
         response = super().form_valid(form)
         messages.success(self.request, 'تصویر پروفایل شما با موفقیت به‌روزرسانی شد.')
         return response
     
+    # -----------------------------------      
     def get_object(self, queryset=None):
         # اگر Profile وجود نداشت، یک جدید ایجاد کن
         profile, created = Profile.objects.get_or_create(user=self.request.user)
         return profile
-    
+
+    # -----------------------------------       
     def form_invalid(self, form):
         # نمایش خطاهای form از طریق messages
         for field, errors in form.errors.items():
@@ -82,15 +91,19 @@ class AdminProfileImageEditView(LoginRequiredMixin, HasAdminAccesPermission, Upd
         return redirect(self.success_url)
 # -------------------------------------------------------------------------------------------  
 class AdminProductListView(LoginRequiredMixin, HasAdminAccesPermission, ListView):
+
     template_name = 'dashboard/admin/product_list.html'
     context_object_name = "products"
     paginate_by = 9
 
+    # -----------------------------------    
     def get_paginate_by(self, queryset):
+
         """
         Get the number of items per page from request parameters.
         Default is 9, can be 5, 9, 12, 15, or 20.
         """
+
         paginate_by = self.request.GET.get('paginate_by')
         if paginate_by:
             try:
@@ -101,7 +114,9 @@ class AdminProductListView(LoginRequiredMixin, HasAdminAccesPermission, ListView
                 pass
         return self.paginate_by
 
+    # -----------------------------------    
     def get_queryset(self):
+
         queryset = Product.objects.all().prefetch_related('images', 'category')
         
         # Search filter
@@ -142,38 +157,46 @@ class AdminProductListView(LoginRequiredMixin, HasAdminAccesPermission, ListView
         
         return queryset
 
+    # -----------------------------------    
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['categories'] = Category.objects.all()
         return context
 # -------------------------------------------------------------------------------------------  
 class AdminProductUpdateView(LoginRequiredMixin, HasAdminAccesPermission, UpdateView):
+
     template_name = 'dashboard/admin/product_update.html'
     model = Product
     form_class = AdminProductEditForm
 
+    # -----------------------------------    
     def form_valid(self, form):
         response = super().form_valid(form)
         messages.success(self.request, 'محصول با موفقیت به‌روزرسانی شد.')
         return response
 
+    # -----------------------------------    
     def form_invalid(self, form):
         # نمایش خطاهای form از طریق messages
         for field, errors in form.errors.items():
             for error in errors:
                 messages.error(self.request, error)
         return self.render_to_response(self.get_context_data(form=form))
-    
+
+    # -----------------------------------    
     def get_success_url(self):
         return reverse_lazy('dashboard:admin:product-update', kwargs={'pk': self.object.pk})
 # -------------------------------------------------------------------------------------------  
 class AdminProductDeleteView(LoginRequiredMixin, HasAdminAccesPermission, DeleteView):
+
     template_name = 'dashboard/admin/product_delete.html'
     model = Product
     
+    # -----------------------------------    
     def get_success_url(self):
         return reverse_lazy('dashboard:admin:product-list')
 
+    # -----------------------------------    
     def post(self, request, *args, **kwargs):
         # Get object before deletion
         self.object = self.get_object()
@@ -188,10 +211,12 @@ class AdminProductDeleteView(LoginRequiredMixin, HasAdminAccesPermission, Delete
         return response
 # -------------------------------------------------------------------------------------------  
 class AdminProductCreateView(LoginRequiredMixin, HasAdminAccesPermission, CreateView):
+
     template_name = 'dashboard/admin/product_create.html'
     model = Product
     form_class = AdminProductEditForm
 
+    # -----------------------------------    
     def form_valid(self, form):
         # Set the user as the current logged-in user
         form.instance.user = self.request.user
@@ -199,23 +224,20 @@ class AdminProductCreateView(LoginRequiredMixin, HasAdminAccesPermission, Create
         messages.success(self.request, 'محصول با موفقیت ایجاد شد.')
         return response
 
+    # -----------------------------------    
     def form_invalid(self, form):
         # نمایش خطاهای form از طریق messages
         for field, errors in form.errors.items():
             for error in errors:
                 messages.error(self.request, error)
         return self.render_to_response(self.get_context_data(form=form))
-    
+    # -----------------------------------    
     def get_success_url(self):
         return reverse_lazy('dashboard:admin:product-update', kwargs={'pk': self.object.pk})
-# -------------------------------------------------------------------------------------------  
+# ------------------------------------------------------------------------------------------- 
 class AdminOrderListView(LoginRequiredMixin, HasAdminAccesPermission, TemplateView):
     template_name = 'dashboard/admin/orders/order_list.html'
-    # context_object_name = "orders"
-    # paginate_by = 10
 
-    # def get_queryset(self):
-    #     return Order.objects.all().select_related('user', 'address').prefetch_related('items__product').order_by('-created_at')
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         

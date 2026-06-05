@@ -1,8 +1,9 @@
 from django import forms
 from .models import Coupon
 from django.utils import timezone
-
+# ---------------------------------------------------------------------------------------------
 class CheckOutForm(forms.Form):
+    
     coupon_code = forms.CharField(
         required=False,
         max_length=50,
@@ -13,11 +14,13 @@ class CheckOutForm(forms.Form):
             'class': 'form-control'
         })
     )
-    
+
+    # ---------------------------------
     def __init__(self, *args, request=None, **kwargs):
         super().__init__(*args, **kwargs)
         self.request = request
-    
+
+    # ---------------------------------
     def clean_coupon_code(self):
         code = self.cleaned_data.get('coupon_code')
         
@@ -47,3 +50,4 @@ class CheckOutForm(forms.Form):
             self.coupon = coupon
         
         return code
+# ---------------------------------------------------------------------------------------------
