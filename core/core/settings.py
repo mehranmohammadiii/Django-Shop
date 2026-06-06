@@ -148,17 +148,19 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # settings.py
 
 
-# email settings
-
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_HOST = config('EMAIL_HOST',defualt='smtp4dev')  # e.g., 'smtp.gmail.com' or 'smtp.office365.com'
-# EMAIL_PORT = config('EMAIL_PORT',cast=int,defualt=25)  # Common ports: 587 (TLS), 465 (SSL)
-# EMAIL_USE_TLS = config('EMAIL_USE_TLS',cast=bool,defualt=False)  # Use TLS for secure connection (often with port 587)
-# EMAIL_USE_SSL = config('EMAIL_USE_SSL',cast=bool,defualt=False) # Use SSL for secure connection (often with port 465)
-# EMAIL_HOST_USER = config('EMAIL_HOST_USER',defualt='')  # 'your_email@example.com'
-# EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD',defualt='')   # 'your_app_password_or_regular_password'
-# DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL ',defualt='')    # 'your_email@example.com' # Default sender for emails
-# SERVER_EMAIL = config('SERVER_EMAIL',defualt='')  # 'your_email@example.com' # Sender for server-generated emails (e.g., error notifications)
+# Email — defaults use smtp4dev (Docker service). For Gmail, set vars in .env.
+EMAIL_BACKEND = config(
+    'EMAIL_BACKEND',
+    default='django.core.mail.backends.smtp.EmailBackend',
+)
+EMAIL_HOST = config('EMAIL_HOST', default='smtp4dev')
+EMAIL_PORT = config('EMAIL_PORT', cast=int, default=25)
+EMAIL_USE_TLS = config('EMAIL_USE_TLS', cast=bool, default=False)
+EMAIL_USE_SSL = config('EMAIL_USE_SSL', cast=bool, default=False)
+EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
+DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='noreply@shop.local')
+SERVER_EMAIL = config('SERVER_EMAIL', default=DEFAULT_FROM_EMAIL)
 
 AUTH_USER_MODEL = "accounts.User"
 
@@ -174,3 +176,23 @@ LOGOUT_REDIRECT_URL = 'accounts:login'  # Redirect to home page after logout
 
 MERCHANT_ID = config('MERCHANT_ID',default='e5f9e6b2-a005-4d8e-851c-63e026ec3421')
 SANDBOX_MODE = config('SANDBOX_MODE', cast = bool,default=True)
+
+
+
+
+
+# Redis
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": config("REDIS_URL", default="redis://redis:6379/1"),
+    }
+}
+
+# Celery
+CELERY_BROKER_URL = config("CELERY_BROKER_URL", default="redis://redis:6379/0")
+CELERY_RESULT_BACKEND = config("CELERY_RESULT_BACKEND", default="redis://redis:6379/0")
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = TIME_ZONE

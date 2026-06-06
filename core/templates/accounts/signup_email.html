@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <div class="container content-space-3 content-space-t-lg-4 content-space-b-lg-3">
+      <div class="flex-grow-1 mx-auto" style="max-width: 28rem;">
+        <div class="text-center mb-5 mb-md-7">
+          <h1 class="h2">ثبت‌نام</h1>
+          <p>ایمیل خود را وارد کنید تا کد تأیید برایتان ارسال شود.</p>
+        </div>
+
+        <form action="{% url 'accounts:signup' %}" method="post">
+          {% csrf_token %}
+
+          {% if form.non_field_errors %}
+            <div class="alert alert-danger" role="alert">
+              {% for error in form.non_field_errors %}
+                {{ error }}<br>
+              {% endfor %}
+            </div>
+          {% endif %}
+
+          <div class="mb-4">
+            <label class="form-label" for="signupEmail">ایمیل شما</label>
+            <input type="email" class="form-control form-control-lg text-center" name="email"
+              id="signupEmail" placeholder="email@site.com" aria-label="email@site.com"
+              value="{{ form.email.value|default:'' }}" required>
+            {% if form.email.errors %}
+              <div class="alert alert-danger mt-2">
+                {% for error in form.email.errors %}{{ error }}<br>{% endfor %}
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="d-grid mb-3">
+            <button type="submit" class="btn btn-primary btn-lg">ارسال کد تأیید</button>
+          </div>
+
+          <div class="text-center">
+            <p>قبلاً ثبت‌نام کرده‌اید؟ <a class="link" href="{% url 'accounts:login' %}">ورود</a></p>
+          </div>
+        </form>
+      </div>
+    </div>
+
+{% endblock content %}

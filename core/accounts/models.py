@@ -83,5 +83,10 @@ def create_profile(sender, instance, created, **kwargs):
     # if created and instance.type == UserType.CUSTOMER.value:
     #     Profile.objects.create(user=instance)
     if created:
-        Profile.objects.create(user=instance)
+        Profile.objects.create(
+            user=instance,
+            first_name="",
+            last_name="",
+            descriptions="",
+        )
 # --------------------------------------------------------------------------------------------
