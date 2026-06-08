@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.utils.text import slugify
 # ---------------------------------------------------------------------------------------------------
 class ProductStatus(models.IntegerChoices):
     ACTIVE = 1, 'Active'
@@ -23,6 +24,32 @@ class Product(models.Model):
     avg_rating = models.DecimalField(default=0, max_digits=3, decimal_places=2)
     
     # ----------------------------------
+    def save(self, *args, **kwargs):
+        # اگر عکس تغییر کرده است، عکس‌های دیگر و ProductImage‌های قدیم را حذف کن
+        if self.pk:
+            try:
+                old_instance = Product.objects.get(pk=self.pk)
+                # اگر عکس اصلی تغییر کرده است
+                if old_instance.image != self.image:
+                    # عکس قدیم را حذف کن
+                    if old_instance.image:
+                        old_instance.image.delete(save=False)
+                    # تمام ProductImage‌های قدیم را حذف کن
+                    self.images.all().delete()
+            except Product.DoesNotExist:
+                pass
+        
+        if not self.slug:
+            base_slug = slugify(self.name, allow_unicode=True)
+            slug = base_slug
+            counter = 1
+            while Product.objects.filter(slug=slug).exclude(pk=self.pk).exists():
+                slug = f"{base_slug}-{counter}"
+                counter += 1
+            self.slug = slug
+        super().save(*args, **kwargs)
+    
+    # ----------------------------------
     def __str__(self):
         return self.name
     
@@ -34,6 +61,18 @@ class Category(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
     slug = models.SlugField(allow_unicode=True, unique=True)
+    
+    # ----------------------------------
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            base_slug = slugify(self.name, allow_unicode=True)
+            slug = base_slug
+            counter = 1
+            while Category.objects.filter(slug=slug).exclude(pk=self.pk).exists():
+                slug = f"{base_slug}-{counter}"
+                counter += 1
+            self.slug = slug
+        super().save(*args, **kwargs)
     
     # ----------------------------------
     def __str__(self):

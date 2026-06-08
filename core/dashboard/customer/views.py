@@ -74,7 +74,7 @@ class CustomerProfileImageEditView(LoginRequiredMixin, HasCustomerAccesPermissio
     def get_object(self, queryset=None):
         # اگر Profile وجود نداشت، یک جدید ایجاد کن
         profile, created = Profile.objects.get_or_create(user=self.request.user)
-        return 
+        return profile 
         
     # -----------------------------------    
     def form_invalid(self, form):
