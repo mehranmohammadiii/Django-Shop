@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView
-from shop.models import Product, ProductStatus
+from shop.models import Product, ProductStatus, Category
 
 class HomePageView(TemplateView):
     template_name = "website/home.html"
@@ -17,6 +17,10 @@ class HomePageView(TemplateView):
         context['hero_slider_products'] = Product.objects.filter(
             status=ProductStatus.ACTIVE
         ).prefetch_related('images', 'category')[:3]
+        
+        # Get all categories to display in the card grid
+        context['categories'] = Category.objects.all()[:3]
+        
         return context
 
 class AboutPageView(TemplateView):

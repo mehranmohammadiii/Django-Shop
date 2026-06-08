@@ -65,8 +65,10 @@ class ShopProductListView(ListView):
         # Filter by category
         category = self.request.GET.get('category')
         if category:
+            # Try to filter by slug first, then by id as fallback
+            # queryset = queryset.filter(category__slug=category)
             queryset = queryset.filter(category__id=category)
-        
+
         # Sorting
         sort = self.request.GET.get('sort')
         if sort == 'newest':

@@ -41,7 +41,8 @@
                   <label for="subscribeForm" class="form-label visually-hidden">ایمیل را وارد کنید</label>
                   <input type="text" class="form-control form-control-lg" id="subscribeForm" placeholder="ایمیل خود را وارد نمایید" aria-label="ایمیل خود را وارد کنید">
                 </div>
-                <button type="button" class="btn btn-primary btn-lg rounded-pill">ثبت نام</button>
+                <a href="{% url 'accounts:signup' %}" class="btn btn-primary btn-lg rounded-pill">ثبت نام</a>
+
               </div>
               <!-- End Input Card -->
             </form>

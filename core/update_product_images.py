@@ -49,6 +49,11 @@ for i, product in enumerate(products):
     print(f"  عکس ({source}): {image_path.name}")
     
     try:
+        # حذف عکس قدیم و تمام ProductImage‌های قدیم
+        if product.image:
+            product.image.delete(save=False)
+        product.images.all().delete()
+        
         with open(image_path, 'rb') as f:
             product.image.save(
                 image_path.name,

@@ -19,7 +19,7 @@
                     <!-- Slide -->
                     <div class="swiper-slide">
                       <div class="card card-bordered shadow-none">
-                        <img class="card-img" src="/media/{{ image.image }}" alt="{{ image.alt_text }}" style="height: 500px; object-fit: cover;">
+                        <img class="card-img" src="{{ image.image.url }}" alt="{{ image.alt_text }}" style="height: 500px; object-fit: cover;">
                       </div>
                     </div>
                     <!-- End Slide -->
@@ -28,7 +28,7 @@
                     <!-- Slide -->
                     <div class="swiper-slide">
                       <div class="card card-bordered shadow-none">
-                        <img class="card-img" src="/media/{{ product.image }}" alt="{{ product.name }}" style="height: 500px; object-fit: cover;">
+                        <img class="card-img" src="{{ product.image.url }}" alt="{{ product.name }}" style="height: 500px; object-fit: cover;">
                       </div>
                     </div>
                     <!-- End Slide -->
@@ -58,7 +58,7 @@
                       <!-- Slide -->
                       <div class="swiper-slide">
                         <a class="avatar avatar-circle" href="javascript:;">
-                          <img class="avatar-img" src="/media/{{ image.image }}" alt="{{ image.alt_text }}" style="object-fit: cover;">
+                          <img class="avatar-img" src="{{ image.image.url }}" alt="{{ image.alt_text }}" style="object-fit: cover;">
                         </a>
                       </div>
                       <!-- End Slide -->
@@ -67,7 +67,7 @@
                       <!-- Slide -->
                       <div class="swiper-slide">
                         <a class="avatar avatar-circle" href="javascript:;">
-                          <img class="avatar-img" src="/media/{{ product.image }}" alt="{{ product.name }}" style="object-fit: cover;">
+                          <img class="avatar-img" src="{{ product.image.url }}" alt="{{ product.name }}" style="object-fit: cover;">
                         </a>
                       </div>
                       <!-- End Slide -->
@@ -781,7 +781,8 @@
                   <label for="subscribeForm" class="form-label visually-hidden">ایمیل را وارد کنید</label>
                   <input type="text" class="form-control form-control-lg" id="subscribeForm" placeholder="ایمیل خود را وارد کنید" aria-label="ایمیل خود را وارد کنید">
                 </div>
-                <button type="button" class="btn btn-primary btn-lg rounded-pill">ثبت نام</button>
+                 <a href="{% url 'accounts:signup' %}" class="btn btn-primary btn-lg rounded-pill">ثبت نام</a>
+
               </div>
               <!-- End Input Card -->
             </form>
